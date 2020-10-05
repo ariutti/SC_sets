@@ -1,5 +1,23 @@
+// SAKANOTO (a.k.a. Cromosomi)
+
 t = TempoClock.default;
 t.tempo_(80/60)
+
+(
+Tdef(\changeTempoGradually, {
+	var timeInterval = 0.5;
+	t.tempo = (136/60);
+	(136-80-1).do {
+		t.tempo = (t.tempo*60-1)/60;
+		timeInterval.wait;
+	};
+	t.tempo = (80/60);
+})
+)
+Tdef(\changeTempoGradually).play;
+Tdef(\changeTempoGradually).stop;
+
+
 
 // @ 80 BPM loop chords will be
 // Db | Eb | Fm | Eb ||
@@ -15,18 +33,17 @@ t.tempo_(80/60)
 MIDIClient.init;
 MIDIIn.connectAll;
 
-Pbindef.gui
+Pbindef.gui;
 
 
 
 // VERB ////////////////////////////////////////////////////////////
-
-~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,1.0]);
-~verb.set(\dec,0.6, \lpf,1500, \wet,1.0);
+//~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,1.0]);
+//~verb.set(\dec,0.6, \lpf,1500, \wet,1.0);
 
 Pbindef.gui;
 
-// -------------------
+// NOISE FX ////////////////////////////////////////////////////////
 (
 SynthDef(\staticNoise, {
 	|amp=1.0, out=0|
@@ -43,7 +60,7 @@ SynthDef(\staticNoise, {
 ~static_noise_1.set(\amp, 4);
 ~static_noise_1.free;
 
-
+// PIANO LOOP //////////////////////////////////////////////////////
 (
 SynthDef(\sliceplayer, {
 	|
@@ -97,7 +114,7 @@ SynthDef(\sliceplayer, {
 Pbindef.gui;
 Pbindef(\pads).stop;
 
-// complete
+// complete loop
 (
 Pbindef(\pads,
 	\degree, Pseq([
@@ -114,7 +131,7 @@ Pbindef(\loop,
 	\loopbuf, d["loops"][6],
 	\loopbars, 8,
 	\loopbpm, 80,
-	\currentBpm, Pfunc({TempoClock.default.tempo}),
+	\currentBpm, Pfunc({t.tempo}),
 	\atk, 0.0,
 	\rel, 0.1,
 	\amp, 0.7,
@@ -126,13 +143,14 @@ Pbindef(\loop,
 Pbindef(\loop).play;
 Pbindef(\loop).stop;
 
+// loop version 2
 (
 Pbindef(\loop,
 	\instrument, \sliceplayer,
 	\loopbuf, d["loops"][6],
 	\loopbars, 8,
 	\loopbpm, 80,
-	\currentBpm, Pfunc({TempoClock.default.tempo}),
+	\currentBpm, Pfunc({t.tempo}),
 	\atk, 0.0,
 	\rel, 0.1,
 	\amp, 1,
@@ -153,28 +171,10 @@ Pbindef(\pads,
 		//[ -1,1,3 ], // Eb maj
 		//[ -2,0,2, 3, 4 ] // Db
 	], inf),
-).quant_(4).stop.play;
+).quant_(4);
 
 Pbindef(\loop,	\start, 0.0,\dur, 0.5, \amp, 1); // Db
 )
-
-//Pbindef(\loop,	\start, Pseq([Pn(0.0,14), (0.125*3/4) + 0.125],inf),\dur, Pseq([Pn(0.5,14), 1],inf), \amp, 1);
-
-
-
-(
-Pbindef(\pads,
-	\degree, Pseq([
-		//[-3,-1, 0,2,4], // Fm
-		[ -1,1,3 ], // Eb maj
-		//[ -2,0,2, 3, 4 ] // Db
-	], inf),
-).quant_(4).play;
-
-Pbindef(\loop,	\start, 0.0625,\dur, 0.5, \amp, 0.5); // Eb
-)
-Pbindef(\loop,	\start, 0.1875,\dur, 0.5); // Eb
-
 
 (
 Pbindef(\pads,
@@ -183,9 +183,25 @@ Pbindef(\pads,
 		//[ -1,1,3 ], // Eb maj
 		//[ -2,0,2, 3, 4 ] // Db
 	], inf),
-).quant_(4).play;
+).quant_(4);
+
 Pbindef(\loop,	\start, 0.125,\dur, 0.5, \amp, 0.6); // Fm
 )
+
+(
+Pbindef(\pads,
+	\degree, Pseq([
+		//[-3,-1, 0,2,4], // Fm
+		[ -1,1,3 ], // Eb maj
+		//[ -2,0,2, 3, 4 ] // Db
+	], inf),
+).quant_(4);
+
+Pbindef(\loop,	\start, 0.0625,\dur, 0.5, \amp, 0.5); // Eb
+)
+Pbindef(\loop,	\start, 0.1875,\dur, 0.5); // Eb
+
+
 
 Pbindef(\loop, \amp, 0.7);
 Pbindef(\loop).stop;
@@ -208,7 +224,7 @@ Pbindef(\loop,
 )*/
 
 
-// Db Fm Eb
+// Here's my boy: Db | Fm | Eb
 (
 Pbindef(\loop,
 	\start, Pseq([Pn(0.0, 16), Pn(0.125,8), Pn(0.0625,8)], inf) ,//([8,1],inf), Pseq([0.0, 0.125], inf)), //Pseq((0..7)/16,inf),
@@ -230,11 +246,13 @@ Pbindef(\loop,
 Pbindef(\loop, \start, Prand([0.0, 0.0, 0.125,0.0625], inf),\dur, 0.25); // Db
 
 
-// finale
+// finale !!!!
+// REMEMBER: first make the pads fade away
 (
 ~static_noise_1.free;
 Pbindef(\pads).stop;
 Pbindef(\loop,	\start, 0.0,\dur, Pseq([0.5], 1), \addAction, 0); // Db
+//Pbindef(\loop,	\start, 0.125,\dur, Pseq([0.5], 1), \addAction, 0); // Fm
 )
 
 // pads ////////////////////////////////////////////////////////////
@@ -270,50 +288,50 @@ Pbindef(\pads,
 	\mtranspose, Pwhite(-0.01, 0.01, inf).clump(5),
 	\octave, Prand([3,4,5],inf).clump(5),
 	\degree, Pseq([
+		[ -2,0,2, 3, 4 ], // Db
 		[-3,-1, 0,2,4], // Fm
 		[ -1,1,3 ], // Eb maj
-		[ -2,0,2, 3, 4 ] // Db
 		//[-2,2,6, 7,11,15 ]
 	], inf),
 	\pan, Pwhite(-1.0, 1.0 ,inf).clump(5),
-	\amp, Pgauss(0.1, 0.01, inf).clump(5),
+	\amp, Pgauss(0.1, 0.01, inf).clump(5) * 0.5,
 	\rq, Pwhite(2, 0.5, inf),
-	\dur, 8,
+	\dur, Pseq([8, 4,4], inf),
 	\addAction,0
-).quant_(4).play;
+).quant_(4).stop.play;
 )
 
 Pbindef(\pads).stop;
 Pbindef(\pads).clear;
 
 
-(
-Pbindef(\pads,
-	\instrument, \sinfb,
-	\scale, Scale.minor,
-	\root,5,
-	\mtranspose, Pwhite(-0.01, 0.01, inf).clump(5),
-	\octave, 5, //Prand([3,4,5],inf).clump(5),
-	\degree, Pseq([
-		[-3,-1, 0,2,4], // Fm
-		//[ -1,1,3 ], // Eb maj
-		[ -2,0,2, 3, 4 ] // Db
-		//[-2,2,6, 7,11,15 ]
-	], inf),
-	\pan, Pwhite(-1.0, 1.0 ,inf).clump(5),
-	\amp, Pgauss(0.1, 0.01, inf).clump(5) * 0.6,
-	\fb, Pwhite(0.2,0.6,inf).clump(6),
-	\atk, 2,
-	\rel, 8,
-	\dur, 7,
-	\addAction,0
-).quant_(4).play;
-)
+// (
+// Pbindef(\pads,
+// 	\instrument, \sinfb,
+// 	\scale, Scale.minor,
+// 	\root,5,
+// 	\mtranspose, Pwhite(-0.01, 0.01, inf).clump(5),
+// 	\octave, 5, //Prand([3,4,5],inf).clump(5),
+// 	\degree, Pseq([
+// 		[-3,-1, 0,2,4], // Fm
+// 		//[ -1,1,3 ], // Eb maj
+// 		[ -2,0,2, 3, 4 ] // Db
+// 		//[-2,2,6, 7,11,15 ]
+// 	], inf),
+// 	\pan, Pwhite(-1.0, 1.0 ,inf).clump(5),
+// 	\amp, Pgauss(0.1, 0.01, inf).clump(5) * 0.6,
+// 	\fb, Pwhite(0.2,0.6,inf).clump(6),
+// 	\atk, 2,
+// 	\rel, 8,
+// 	\dur, 7,
+// 	\addAction,0
+// ).quant_(4).play;
+// )
 
 
 // wavetable pads
 
-(
+/*(
 Pbindef(\pads,
 	\instrument, \wtplay,
 	\root, 5,
@@ -335,8 +353,7 @@ Pbindef(\pads,
 	\dur, Pseq([8], inf), //Pbjorklund2(Pwhite(3,9).asStream.round(1),16,inf, Pwhite(0,15).asStream.round(1))/16
 	\addAction, 0
 ).quant_([4,0]).play
-)
-
+)*/
 
 
 
@@ -397,7 +414,7 @@ Pbindef(\stabs,
 	\atk, 0.0,
 	\rel, 0.07,
 	\dur, 8,
-	\amp, Pgauss(1, 0.01, inf).clump(2) * 1,
+	\amp, Pgauss(1, 0.01, inf).clump(2) * 0.3,
 	\strum, 0,
 	\addAction, 0
 ).quant_([4, 1]).stop.play;
@@ -406,6 +423,7 @@ Pbindef(\stabs).stop
 
 
 // DRUMS ///////////////////////////////////////////////////////////////////////
+
 
 (
 SynthDef(\k, {
@@ -424,6 +442,7 @@ SynthDef(\k, {
 s.scope
 Pbindef(\k).clear;
 
+// 1 on 4
 (
 Pbindef(\k,
 	\instrument, \k,
@@ -489,7 +508,6 @@ Pbindef(\hh,
 Pbindef(\hh).stop;
 
 
-
 (
 SynthDef(\bplay_dist,
 	{arg out = 0, buf = 0, rate = 1, amp = 0.5, pan = 0, pos = 0, atk=0.0, rel=15, dist=1.0;
@@ -544,10 +562,35 @@ Pbindef(\clap).stop;
 Pbindef(\hh).stop;
 )
 
+// BASS ///////////////////////////////////////////////////////////////////
+(
+SynthDef(\loSin, {
+	|freq=16000, atk=1,rel=0, out=0, amp=1.0,dist=1.0, pan=0.0|
+	var env =EnvGen.ar(Env.perc(atk, rel, curve:[10,-4]), doneAction:2);
+	//var sig = SinOsc.ar(freq, [0.0, 0.5pi]);
+	var sig = VarSaw.ar(freq, width:0.1);
+	sig = (sig*dist).tanh * env * amp;
+	Out.ar(out, Pan2.ar(sig, pan));
+}).add;
+)
+
+(
+Pbindef(\bass,
+	\instrument, \loSin,
+	\freq, (65-24).midicps,
+	\dist, 100,
+	\amp, 0.2,
+	\atk, 8 * t.beatDur,
+	\rel, 0.0,
+	\dur, 8,
+	\addAction,0
+).quant_([4]).stop.play;
+)
+Pbindef(\bass).play;
+Pbindef(\bass).stop;
+
 
 // GLITCH /////////////////////////////////////////////////////////////////////////////////////
-
-
 (
 SynthDef(\glicth1, {
 	|freq=440,amp=1.0
@@ -572,9 +615,9 @@ SynthDef(\glitch2, {
 }).add;
 );
 
-
+/*
 (
-Pbindef(\A,
+Pbindef(\glitchA,
 	\instrument, \glicth1,
 	\scale, Scale.minor,
 	\octave, 3,
@@ -587,12 +630,12 @@ Pbindef(\A,
 ).quant_(1);
 );
 
-Pbindef(\A).clear;
-Pbindef(\A).play;
-Pbindef(\A).stop;
+Pbindef(\glitchA).clear;
+Pbindef(\glitchA).play;
+Pbindef(\glitchA).stop;*/
 
 (
-Pbindef(\B,
+Pbindef(\glitchB,
 	\instrument, \glitch2,
 	\dur, Pbjorklund2(3,4,inf,Prand([2,4],inf).asStream)/4,
 	\amp, 5,
@@ -602,10 +645,8 @@ Pbindef(\B,
 ).quant_(1);
 );
 
-Pbindef(\B).stop;
-Pbindef(\B).play;
-
-
+Pbindef(\glitchB).stop;
+Pbindef(\glitchB).play;
 
 
 (
@@ -633,35 +674,6 @@ Pbindef(\hi,
 Pbindef(\hi).play;
 Pbindef(\hi).stop;
 
-
-(
-SynthDef(\loSin, {
-	|freq=16000, atk=1,rel=0, out=0, amp=1.0,dist=1.0, pan=0.0|
-	var env =EnvGen.ar(Env.perc(atk, rel, curve:[10,-4]), doneAction:2);
-	//var sig = SinOsc.ar(freq, [0.0, 0.5pi]);
-	var sig = VarSaw.ar(freq, width:0.1);
-	sig = (sig*dist).tanh * env * amp;
-	Out.ar(out, Pan2.ar(sig, pan));
-}).add;
-)
-
-
-(
-Pbindef(\lo,
-	\instrument, \loSin,
-	\freq, (65-24).midicps,
-	\dist, 100,
-	\amp, 0.2,
-	\atk, 8 * t.beatDur,
-	\rel, 0.0,
-	\dur, 8,
-	\addAction,0
-).quant_([4]).stop.play;
-)
-Pbindef(\lo).play;
-Pbindef(\lo).stop;
-
-
 (
 Pbindef(\hi2,
 	\instrument, \hiSin,
@@ -675,9 +687,9 @@ Pbindef(\hi2,
 	\rel, 0.025,
 	\pan, Pseq([-1.0, 1.0], inf),
 	\addAction, 1
-).quant_([4,0]).play;
+).quant_([4,0]);
 )
-
+Pbindef(\hi2).play;
 Pbindef(\hi2).stop;
 (
 Pbindef(\chirp,
@@ -701,10 +713,10 @@ Pbindef(\chirp).stop;
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A1 pressed".postln;
+		"pad A1 pressed - kick ON".postln;
 		Pbindef(\k).play;
 	}, {
-		"pad A1 released".postln;
+		"pad A1 released - kick OFF".postln;
 		Pbindef(\k).stop;
 
 	});
@@ -715,10 +727,10 @@ Pbindef(\chirp).stop;
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A2 pressed".postln;
+		"pad A2 pressed - snare ON".postln;
 		Pbindef(\s).play;
 	}, {
-		"pad A2 released".postln;
+		"pad A2 released - snare OFF".postln;
 		Pbindef(\s).stop;
 
 	});
@@ -730,10 +742,10 @@ Pbindef(\chirp).stop;
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A3 pressed".postln;
+		"pad A3 pressed - hihat ON".postln;
 		Pbindef(\hh).play;
 	}, {
-		"pad A3 released".postln;
+		"pad A3 released - hihat OFF".postln;
 		Pbindef(\hh).stop;
 	});
 },22);
@@ -743,10 +755,10 @@ Pbindef(\chirp).stop;
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A4 pressed".postln;
+		"pad A4 pressed - cymbal ON".postln;
 		Pbindef(\cymbal).play;
 	}, {
-		"pad A4 released".postln;
+		"pad A4 released - cymbal OFF".postln;
 		Pbindef(\cymbal).stop;
 	});
 },23);
@@ -757,12 +769,12 @@ Pbindef(\chirp).stop;
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad A5 pressed".postln;
-		Pbindef(\lo).play;
+		"pad A5 pressed - bass (a.k.a. lo) ON".postln;
+		Pbindef(\bass).play;
 
 	}, {
-		"pad A5 released".postln;
-		Pbindef(\lo).stop;
+		"pad A5 released - bass (a.k.a. lo) OFF".postln;
+		Pbindef(\bass).stop;
 
 	});
 },24);
@@ -773,10 +785,10 @@ Pbindef(\chirp).stop;
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A6 pressed".postln;
+		"pad A6 pressed - pads ON".postln;
 		Pbindef(\pads).play;
 	}, {
-		"pad A6 released".postln;
+		"pad A6 released - pads OFF".postln;
 		Pbindef(\pads).stop;
 	});
 },25);
@@ -787,10 +799,10 @@ Pbindef(\chirp).stop;
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad A7 pressed".postln;
+		"pad A7 pressed - sputnik ON".postln;
 		Pbindef(\sputnik).play;
 	}, {
-		"pad A7 released".postln;
+		"pad A7 released - sputnik OFF".postln;
 		Pbindef(\sputnik).stop;
 	});
 },26);
@@ -801,11 +813,11 @@ Pbindef(\chirp).stop;
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad A8 pressed".postln;
+		"pad A8 pressed - stabs ON".postln;
 		Pbindef(\stabs).play;
 
 	}, {
-		"pad A8 released".postln;
+		"pad A8 released - stabs OFF".postln;
 		Pbindef(\stabs).stop;
 	});
 },27);
@@ -816,11 +828,12 @@ Pbindef(\chirp).stop;
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad B1 pressed".postln;
+		"pad B1 pressed - chirp ON".postln;
+		Pbindef(\chirp).play;
 
 	}, {
-		"pad B1 released".postln;
-
+		"pad B1 released - chirp OFF".postln;
+		Pbindef(\chirp).stop;
 	});
 },28);
 
@@ -829,11 +842,11 @@ Pbindef(\chirp).stop;
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad B2 pressed".postln;
-
+		"pad B2 pressed - glitchB ON".postln;
+		Pbindef(\glitchB).play;
 	}, {
-		"pad B2 released".postln;
-
+		"pad B2 released - glitchB OFF".postln;
+		Pbindef(\glitchB).stop;
 	});
 },29);
 
@@ -843,11 +856,11 @@ Pbindef(\chirp).stop;
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad B3 pressed".postln;
-
+		"pad B3 pressed - hi2 ON".postln;
+		Pbindef(\hi2).play;
 	}, {
-		"pad B3 released".postln;
-
+		"pad B3 released - hi2 OFF".postln;
+		Pbindef(\hi2).stop;
 	});
 },30);
 
@@ -945,7 +958,7 @@ Pbindef(\chirp).stop;
 	arg ...args;
 	//args.postln;
 	var verbwet = args[0].linlin(0, 127, 0.0, 1.0);
-	("verb wet " ++ verbwet).postln;
+	("verb wet " ++ verbwet.round(0.001)).postln;
 	~verb.set(\dec,2, \lpf,5000, \wet, verbwet);
 
 },2);
@@ -968,9 +981,9 @@ Pbindef(\chirp).stop;
 ~k5.free;
 ~k5 = MIDIFunc.cc({
 	arg ...args;
-	args.postln;
-
-
+	//args.postln;
+	~vocoder_amp = args[0].linlin(0,127,0.0, 1);
+	("~vocoder_amp = " ++ ~vocoder_amp.round(0.001)).postln;
 },5);
 
 ~k6.free;
@@ -993,3 +1006,32 @@ Pbindef(\chirp).stop;
 	args.postln;
 },8);
 )
+
+
+// vocoder experimental
+
+// Db Fm Eb
+(
+Pbindef(\chords,
+	\instrument, \vocoder_synth,
+	\scale, Scale.minor,
+	\root, 5,
+	\octave, Prand([3,4,5,6], inf).clump(4),
+	\degree, Pseq([
+		Pn([0,2,3,4],16 * 2), // Db
+		Pn([0,2,4,7],8 * 2), // Fm
+		Pn([-1,1,3,4],8 * 2) // Eb maj
+	], inf),
+	\mtranspose, Pwhite(-0.02, 0.02, inf).clump(4),
+	\width, 0.01, //Pwhite(0.01, 0.5, inf).clump(4),
+	\in, ~bus_modulator,
+	\atk, 0.5,
+	\rel, 1,
+	\amp, Pgauss(0.125, 0.1, inf).clump(4) * 0.5,
+	\dur, 0.25,
+	\group, ~grp_vocoders,
+	\pan, Pwhite(-1.0, 1.0, inf).clump(4),
+	\addAction, 0
+).quant_([4]).stop.play;
+)
+Pbindef(\chords).stop;

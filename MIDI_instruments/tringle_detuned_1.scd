@@ -48,14 +48,14 @@ MIDIdef.noteOn(\noteOnDef, {
 		\rel, 0.1,
 		\gate, 1
 	],~midinotes_grp);
-});
+}, chan:0);
 
 MIDIdef.noteOff(\noteOffDef, {
 	arg vel, note, ch, src;
 	[note, vel, "off"].postln;
 	~notes[note].set(\gate, 0);
 	~notes[note] = nil;
-});
+}, chan:0);
 )
 
 s.plotTree

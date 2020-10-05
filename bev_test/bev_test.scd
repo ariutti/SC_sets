@@ -4,7 +4,6 @@
 t = TempoClock.default;
 t.tempo_(120/60);
 s.meter
-
 Tdef(\chordChanger).stop;
 
 // MIDI IN ///////////////////////////////////////////////
@@ -20,13 +19,18 @@ MIDIIn.connectAll;
 // 0.0 | 0.125 | 0.25 | 0.375 || 0.5 | 0.625 | 0.75 | 0.875 ||
 
 
+// EVALUATE THIS FIRST !!!!!!
+(
 ~tonica = 0;
+~bass_freq = 130;
+~bass_rq   = 1;
+)
 
-~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,1.0]);
-~verb.set(\dec,0.1, \lpf,1500, \wet,1.0);
+//~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,1.0]);
+//~verb.set(\dec,0.1, \lpf,1500, \wet,1.0);
 
 
-// PADS VOICES #########################################################################
+// BEV VOICE //////////////////////////////////////////////////////////////////////////////////////////
 
 (
 SynthDef(\bplay_filt,
@@ -63,74 +67,18 @@ Pbindef(\bev,
 ).quant_([4,0]).stop.play;
 )
 
-// you light up (don't use if Tdef is working)
-(
-Pbindef(\bev,
-	\amp, 1.7,
-	\rel, t.beatDur * 3,
-	\cf, 1000,
-	\rq, 4,
-	\dur, 4,
-	\pos, 0.0,
-	\rate, 1,
-	\addAction, 1
-).quant_([4,0]).stop.play;
-)
-
-
-// bottle of wine (don't use if Tdef is working)
-(
-Pbindef(\bev,
-	\amp, 1.7,
-	\rel, t.beatDur * 4,
-	\cf, 1000,
-	\rq, 4,
-	\dur, 4,
-	\pos, 0.25,
-	\rate, 1
-).quant_([4,0]).stop.play;
-)
-
-// story (don't use if Tdef is working)
-(
-Pbindef(\bev,
-	\amp, 1.2,
-	\rel, t.beatDur * 2,
-	\cf, 1000,
-	\rq, 4,
-	\dur, 4,
-	\pos, 0.75,
-	\rate, 1
-).quant_([4,0]).stop.play;
-)
-
-
-// you get alive (don't use if Tdef is working)
-(
-Pbindef(\bev,
-	\amp, 3,
-	\rel, t.beatDur * 4,
-	\cf, 1000,
-	\rq, 4,
-	\dur, 4,
-	\pos, 0.806,
-	\rate, 1
-).quant_([4,0]).stop.play;
-)
-
-
 // first sliced
 (
 Pbindef(\bev,
 	\instrument, \bplay_filt,
 	\buf, ~dirt["bev"][1],
 	\degree, Pseq([0],inf),
-	\amp, 1.5,
 	\cf, 1000,
 	\rq, 4,
 	\rel, 0.25,
 	\dur, 0.5,
-	\pos, Pseq([0,1,2,3,4,5,6,7]/8,inf),
+	\pos, Pseq([  0,  1,  2,  3,  4,  5,  6,  7]/8,inf),
+	\amp, Pseq([1.5,1.5,1.5,1.5,1.5,1.5,1.2,1.5],inf),
 	\rate, Prand([1], inf),
 	\pan, 0.0,
 	\addAction, 1
@@ -143,40 +91,17 @@ Pbindef(\bev,
 	\instrument, \bplay_filt,
 	\buf, ~dirt["bev"][1],
 	\degree, Pseq([0],inf),
-	\amp, 1.5,
 	\cf, 5000,
 	\rq, 4,
 	\rel, 0.25,
 	\dur, 0.5,
-	\pos, Pseq([0,3,2,0,4,7,6,7]/8,inf),
+	\pos, Pseq([  0,  3,  2,  0,  4,  7,  6,  7]/8,inf),
+	\amp, Pseq([1.5,1.5,1.5,1.5,1.5,1.5,0.9,1.5],inf),
 	\rate, Prand([[1,1],[2,1]], inf),
 	\pan, 0.0,
 	\addAction, 1
-).quant_([4,0]).stop.play;
-)
-
-(
-Pbindef(\bev,
-	\instrument, \bplay_filt,
-	\buf, ~dirt["bev"][1],
-	\amp, 1,
-	\atk, 0.0,
-	\cf, Pseg([100, 5000, 100],[4,4],\exp, inf),
-	\rq, 2,
-	\dur, 0.5,
-	\rel, 0.5,
-	\rel, t.beatDur * 0.25, //Prand([0.25, 0.125], inf),
-	//\pos, Pseq((0..6).pyramid(2), inf)/8,
-	//\pos, Prand(((0..100)/100).round(0.125),inf),
-	\pos, Pseq([Pn(0.0, 16), Pn(0.5, 16)],inf),
-	//\pos, Pseq((0..3),inf)/8,
-	\rate, 1, //Prand([1,2,[1,2]], inf),
-	\pan, 0.0,
-	\addAction,0
 ).quant_([4,0]).play;
 )
-
-
 
 // texture A
 (
@@ -196,12 +121,11 @@ Pbindef(\bev,
 	\rate, [0,12].midiratio, //Prand([1,2,[1,2]], inf),
 	\pan, Pseq([-1, 1],inf),
 	\addAction,0
-).quant_([4,0]).stop.play;
+).quant_([4,0]).play;
 )
 
 
-
-// texture Abis
+// texture Abis (alternate)
 (
 Pbindef(\bev,
 	\instrument, \bplay_filt,
@@ -219,7 +143,30 @@ Pbindef(\bev,
 	\rate, [0,12].midiratio, //Prand([1,2,[1,2]], inf),
 	\pan, Pseq([-1, 1],inf),
 	\addAction,0
-).quant_(1).stop.play;
+).quant_(1).play;
+)
+
+
+// texture Atris (more space between slices)
+(
+Pbindef(\bev,
+	\instrument, \bplay_filt,
+	\buf, ~dirt["bev"][1],
+	\amp, 1,
+	\atk, 0.0,
+	\cf, Pseg([100, 5000, 100],[4,4],\exp, inf),
+	\rq, 2,
+	\dur, 0.5,
+	\rel, 0.5,
+	\rel, t.beatDur * 0.25, //Prand([0.25, 0.125], inf),
+	//\pos, Pseq((0..6).pyramid(2), inf)/8,
+	//\pos, Prand(((0..100)/100).round(0.125),inf),
+	\pos, Pseq([Pn(0.0, 16), Pn(0.5, 16)],inf),
+	//\pos, Pseq((0..3),inf)/8,
+	\rate, 1, //Prand([1,2,[1,2]], inf),
+	\pan, 0.0,
+	\addAction,0
+).quant_([4,0]).play;
 )
 
 
@@ -252,38 +199,133 @@ Pbindef(\bev, \pos, 0.75); // Gm (don't use it)
 Pbindef(\bev, \pos, 0.875); // Abmaj
 
 
-
-
+// TDEF TONE CHANGER //////////////////////////////////////////////////////////////////////////////////
 (
 Tdef(\chordChanger, {
 
 	// chord progression Cm | Ab | Bb | Cm ||
 	//var pos    = Pseq([ Prand([0.0, 0.5], 1), Prand([0.325, 0.875],1), Prand([0.125, 0.625], 1), Prand([0.0, 0.5], 1)], inf).asStream;
 	//var tonica = Pseq([0,      -2,    -1,   0], inf).asStream;
-
 	// chord progression Cm | Ab | Bb | Cm ||
 	var pos    = Pseq([ Prand([0.0, 0.5], 1), Prand([0.325, 0.875],1), Prand([0.125, 0.625], 1), Prand([0.125, 0.625], 1)], inf).asStream;
 	var tonica = Pseq([0,      -2,    -1, -1], inf).asStream;
 	loop{
 		Pbindef(\bev, \pos, pos.next);
 		~tonica = tonica.next;
+		("tonica = " ++ ~tonica).postln;
 		wait(4);
 	};
 }).quant_([4,0,0.1]);
 )
+
+(
 Tdef(\chordChanger).play;
+Pbindef(\k,\instrument,\bplaym,\buf,~dirt["909"][0],\dur,4,\amp,2,\rel,0.5,\rate,0.9,\addAction,1).quant_([4,0]).stop.play;
+)
+
 Tdef(\chordChanger).stop;
 Tdef(\chordChanger).clear;
 
 
-// PADS VOICES #########################################################################
+// PADS //////////////////////////////////////////////////////////////////////////////////
+
+/*
+(
+SynthDef(\organ, {
+	|freq=400,atk=0.1,rel=0.1,amp=1.0,pan=0.0,n=8, dist=1.0|
+	var env = EnvGen.ar(Env.perc(atk,rel),doneAction:2);
+	var sig = Blip.ar(freq, n, dist).tanh;
+	sig = sig * env * amp;
+	Out.ar(0, Pan2.ar(sig, pan));
+}).add;
+)*/
+
+(
+SynthDef(\varsaw, {
+	|freq=400,atk=0.1,rel=0.1,amp=1.0,pan=0.0,width=0.5, dist=1.0|
+	var env = EnvGen.ar(Env.perc(atk,rel),doneAction:2);
+	var sig = VarSaw.ar(freq, width:width, mul:dist).tanh;
+	sig = sig * env * amp;
+	Out.ar(0, Pan2.ar(sig, pan));
+}).add;
+)
 
 
-// BASS *******************************************************************************/
+// plain chords
+(
+Pbindef(\chords,
+	\instrument, \varsaw,
+	\scale, Scale.minor,
+	\octave, Prand([5,6], inf).clump(3),
+	\root, 0,
+	\degree, Pfunc({~tonica}) + Pseq([[0,2,4]], inf), //Pseq([[0,2,4], [-2,0,2], [-1,1,2],[0,2,4]],inf), // Cm, Abmaj, Bb, Cm
+	\mtranspose, Pwhite(0.0, 0.001, inf).clump(3),
+	\width, 0.3,
+	\dist, 1,
+	\amp, 0.1,
+	\atk, 1,
+	\rel, 7,
+	\dur, 4,
+	\pan, Pwhite(-1.0, 1.0, inf).clump(3),
+	\addAction, 0,
+	\strum, 0.001
+).quant_([4,0]).play;
+)
+Pbindef(\chords).play;
+Pbindef(\chords).stop;
 
-~bass_freq = 3000;
-~bass_rq   = 0.1;
+(
+Tdef(\chordChanger).play;
+Pbindef(\k,\instrument,\bplaym,\buf,~dirt["909"][0],\dur,4,\amp,2,\rel,0.5,\rate,0.9,\addAction,1).quant_([4,0]).stop.play;
+Pbindef(\chords).play;
+)
 
+
+// a bit more aggressive (dirty) chords
+(
+Pbindef(\chords,
+	\instrument, \varsaw,
+	\width, 0.3,
+	\dist, 1,
+	\amp, 0.2,
+	\atk, 1,
+	\rel, 7,
+	\dur, 4,
+).quant_([4,0]).stop.play;
+)
+
+Pbindef(\chords).stop;
+
+
+// more rythm!
+(
+Pbindef(\chords,
+	\instrument, \varsaw,
+	\scale, Scale.minor,
+	\octave, Prand([5,6], inf).clump(3),
+	\root, 0,
+	//\degree, 0 + Pseq([],inf),
+	\degree, Pfunc({~tonica}) + Pseq([ [0,2,4] ], inf),
+	//\degree, Pseq([	Pn([0,2,4],16), Pn([-2,0,2],16), Pn([-1,1,2],16), Pn([0,2,4],16)],inf),
+	\detune, Pwhite(0.0, 5, inf).clump(3),
+	\width, Pwhite(0.1, 0.2,inf).clump(3),
+	\dist, 5,
+	\amp, 0.1,
+	\atk, t.beatDur * 0.05,
+	\rel, t.beatDur * 0.1,
+	\dur,0.25,
+	\pan, Pwhite(-1.0, 1.0, inf).clump(3),
+	\addAction, 1,
+	\strum, 0.001
+).quant_([4,0.0]).play;
+)
+
+
+// BASS ///////////////////////////////////////////////////////////////////////////////////////////////
+(
+~bass_freq = 120;
+~bass_rq   = 0.7;
+)
 
 (
 SynthDef(\squarebass, {
@@ -366,6 +408,7 @@ Pbindef(\bass,
 	\addAction, 1
 ).quant_([4,0]).stop.play;
 )
+Pbindef(\bass).clear
 
 /*
 (
@@ -388,11 +431,9 @@ Pbindef(\bass,
 ).quant_([4,0]).stop.play;
 )
 */
-// END BASS ***************************************************************************/
 
 
-// DRUMS _________________________________
-
+// DRUMS //////////////////////////////////////////////////////////////////////////////////////////////
 (
 Pbindef(\sk,\instrument,\bplaym,\buf,~dirt["909"][0],\dur,8,\amp,4,\rel,8,\rate,1,\addAction,1).quant_([4,0]).stop.play;
 Pbindef(\k,\instrument,\bplaym,\buf,~dirt["909"][0],\dur,4,\amp,2,\rel,0.5,\rate,0.9,\addAction,1).quant_([4,0]).stop.play;
@@ -401,8 +442,6 @@ Pbindef(\hh,\instrument,\bplaym,\buf,~dirt["808oh"][1],\dur,0.25,\amp,0.2,\rel,0
 )
 
 Pbindef(\k).stop;
-
-
 
 (
 Pbindef(\k,\dur,2);
@@ -424,16 +463,15 @@ Pbindef(\s).stop;
 Pbindef(\hh).stop;
 )
 
-
-
-// four on the floor (w/ strong snare)
+// alternate drums - four on the floor (w/ strong snare)
 (
-Pbindef(\sk,\instrument,\bplaym,\buf,~dirt["909"][0],\dur,8,\amp,4,\rel,8,\rate,1,\addAction,Pseq([0,Pn(1,3)],inf)).quant_([8]).stop.play;
+Pbindef(\sk,\instrument,\bplaym,\buf,~dirt["909"][0],\dur,8,\amp,3,\rel,8,\rate,1,\addAction,Pseq([0,Pn(1,3)],inf)).quant_([8]).stop.play;
 Pbindef(\k,\instrument,\bplaym,\buf,~dirt["909"][0],\dur,1,\amp,2,\rel,0.5,\rate,0.9,\addAction,1).quant_([4]).stop.play;
 Pbindef(\s,\instrument,\bplay,\buf,d["s"][1],\dur,2,\amp,1,\rel,1,\rate,0.6,\addAction,1).quant_([4, 1]).stop.play;
 Pbindef(\hh,\instrument,\bplaym,\buf,~dirt["808oh"][1],\dur,0.25,\amp,0.2,\rel,Pseq([Pn(0.02,16+15), 2],inf),\rate,1,\addAction,1).quant_([4]).stop.play;
 )
 
+// crescendo dai dai dai (solo per poco)
 Pbindef(\k,\instrument,\bplaym,\buf,~dirt["909"][0],\dur,Pseq([0.5], inf),\amp,Pseq([1, 0.5],inf) * 2,\rel,0.25,\rate,Pseq([0.9, 0.7],inf),\addAction,1).quant_([4]).stop.play;
 
 
@@ -443,120 +481,8 @@ Pbindef(\s).play;
 Pbindef(\hh).play;
 )
 
-// END of DRUMS __________________________
-
-Pbindef(\chords, \fb, 0.1)
-Pbindef(\chords).stop;
-
-
-(
-SynthDef(\organ, {
-	|freq=400,atk=0.1,rel=0.1,amp=1.0,pan=0.0,n=8, dist=1.0|
-	var env = EnvGen.ar(Env.perc(atk,rel),doneAction:2);
-	var sig = Blip.ar(freq, n, dist).tanh;
-	sig = sig * env * amp;
-	Out.ar(0, Pan2.ar(sig, pan));
-}).add;
-)
-
-(
-SynthDef(\varsaw, {
-	|freq=400,atk=0.1,rel=0.1,amp=1.0,pan=0.0,width=0.5, dist=1.0|
-	var env = EnvGen.ar(Env.perc(atk,rel),doneAction:2);
-	var sig = VarSaw.ar(freq, width:width, mul:dist).tanh;
-	sig = sig * env * amp;
-	Out.ar(0, Pan2.ar(sig, pan));
-}).add;
-)
-
-
-// plain chords
-(
-Pbindef(\chords,
-	\instrument, \varsaw,
-	\scale, Scale.minor,
-	\octave, Prand([5,6], inf).clump(3),
-	\root, 0,
-	\degree, Pfunc({~tonica}) + Pseq([[0,2,4]], inf), //Pseq([[0,2,4], [-2,0,2], [-1,1,2],[0,2,4]],inf), // Cm, Abmaj, Bb, Cm
-	\mtranspose, Pwhite(0.0, 0.001, inf).clump(3),
-	\width, 0.3,
-	\dist, 1,
-	\amp, 0.2,
-	\atk, 1,
-	\rel, 7,
-	\dur, 4,
-	\pan, Pwhite(-1.0, 1.0, inf).clump(3),
-	\addAction, 0,
-	\strum, 0.001
-).quant_([4,0]).stop.play;
-)
-
-(
-Pbindef(\chords,
-	\instrument, \varsaw,
-	\width, 0.3,
-	\dist, 1,
-	\amp, 0.2,
-	\atk, 1,
-	\rel, 7,
-	\dur, 4,
-).quant_([4,0]).stop.play;
-)
-
-
-
-// more rythm!
-(
-Pbindef(\chords,
-	\instrument, \varsaw,
-	\scale, Scale.minor,
-	\octave, Prand([5,6], inf).clump(3),
-	\root, 0,
-	//\degree, 0 + Pseq([],inf),
-	\degree, Pfunc({~tonica}) + Pseq([ [0,2,4] ], inf),
-	//\degree, Pseq([	Pn([0,2,4],16), Pn([-2,0,2],16), Pn([-1,1,2],16), Pn([0,2,4],16)],inf),
-	\detune, Pwhite(0.0, 5, inf).clump(3),
-	\width, Pwhite(0.1, 0.2,inf).clump(3),
-	\dist, 5,
-	\amp, 0.1,
-	\atk, t.beatDur * 0.05,
-	\rel, t.beatDur * 0.1,
-	\dur,0.25,
-	\pan, Pwhite(-1.0, 1.0, inf).clump(3),
-	\addAction, 1,
-	\strum, 0.001
-).quant_([4,0.0]).play;
-)
-
-Pbindef(\stabs).stop;
-
-(
-Pbindef(\chords,
-	\instrument, \varsaw,
-	\scale, Scale.minor,
-	\octave, Prand([5,6], inf).clump(3),
-	\root, 0,
-	//\degree, 0 + Pseq([],inf),
-	\degree, 0 + Pseq([
-		Pn([0,2,4],16), Pn([-2,0,2],16), Pn([-1,1,2],16), Pn([0,2,4],16)
-	],inf),
-	\detune, Pwhite(0.0, 5, inf).clump(3),
-	\width, Pwhite(0.1, 0.2,inf).clump(3),
-	\dist, 1,
-	\amp, 0.1,
-	\atk, t.beatDur * 0.05,
-	\rel, t.beatDur * 0.1,
-	\dur,0.25,
-	\pan, Pwhite(-1.0, 1.0, inf).clump(3),
-	\addAction,1,
-	\strum, 0.001
-).quant_([4,0.0]).play;
-)
-
 
 // LEAD /////////////////////////////////////////////////////////////////////////////////////////////
-
-
 (
 Pbindef(\lead,
 	\instrument, \varsaw,
@@ -564,7 +490,7 @@ Pbindef(\lead,
 	\scale, Scale.minor,
 	\degree, Pseq([4,2,0,4,3,4,6,4,4,3], inf),
 	\dur, Pseq([3,0.75,3.75, 0.25, 0.25], inf),
-	\dist, 2,
+	\dist, 3,
 	\width, 0.3,
 	\atk, 0.01,
 	\rel, 0.1,
@@ -573,8 +499,8 @@ Pbindef(\lead,
 	\addAction,0
 ).quant_([4,0]).stop.play;
 )
-
-
+Pbindef(\lead, \dist, 4, \rel, 0.25, \width, 0.01)
+Pbindef(\lead).stop;
 (
 Pbindef(\lead,
 	\instrument, \varsaw,
@@ -597,12 +523,7 @@ s.meter
 
 
 
-// midi controller
-
-
-// MIDI IN ///////////////////////////////////////////////
-
-
+// MIDI IN ////////////////////////////////////////////////////////////////////////////////////////////
 MIDIClient.init;
 MIDIIn.connectAll;
 
@@ -614,10 +535,10 @@ MIDIIn.connectAll;
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A1 pressed".postln;
+		"pad A1 pressed - kick ON".postln;
 		Pbindef(\k).play;
 	}, {
-		"pad A1 released".postln;
+		"pad A1 released - kick OFF".postln;
 		Pbindef(\k).stop;
 
 	});
@@ -628,10 +549,10 @@ MIDIIn.connectAll;
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A2 pressed".postln;
+		"pad A2 pressed - snare ON".postln;
 		Pbindef(\s).play;
 	}, {
-		"pad A2 released".postln;
+		"pad A2 released - snare OFF".postln;
 		Pbindef(\s).stop;
 
 	});
@@ -643,10 +564,10 @@ MIDIIn.connectAll;
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A3 pressed".postln;
+		"pad A3 pressed - hihat ON".postln;
 		Pbindef(\hh).play;
 	}, {
-		"pad A3 released".postln;
+		"pad A3 released - hihat OFF".postln;
 		Pbindef(\hh).stop;
 	});
 },22);
@@ -656,12 +577,12 @@ MIDIIn.connectAll;
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A4 pressed".postln;
+		"pad A4 pressed - subkick ON".postln;
 		Pbindef(\sk).reset;
 		Pbindef(\sk).play;
 
 	}, {
-		"pad A4 released".postln;
+		"pad A4 released - subkick OFF".postln;
 		Pbindef(\sk).stop;
 	});
 },23);
@@ -672,11 +593,11 @@ MIDIIn.connectAll;
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad A5 pressed".postln;
+		"pad A5 pressed - bass ON".postln;
 		Pbindef(\bass).play;
 
 	}, {
-		"pad A5 released".postln;
+		"pad A5 released - bass OFF".postln;
 		Pbindef(\bass).stop;
 
 	});
@@ -688,10 +609,10 @@ MIDIIn.connectAll;
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A6 pressed".postln;
+		"pad A6 pressed - bev voice ON".postln;
 		Pbindef(\bev).play;
 	}, {
-		"pad A6 released".postln;
+		"pad A6 released - bev voice OFF".postln;
 		Pbindef(\bev).stop;
 	});
 },25);
@@ -702,10 +623,10 @@ MIDIIn.connectAll;
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad A7 pressed".postln;
+		"pad A7 pressed - chords ON".postln;
 		Pbindef(\chords).play;
 	}, {
-		"pad A7 released".postln;
+		"pad A7 released - chords OFF".postln;
 		Pbindef(\chords).stop;
 	});
 },26);
@@ -716,14 +637,16 @@ MIDIIn.connectAll;
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad A8 pressed".postln;
+		"pad A8 pressed - lead ON".postln;
 		Pbindef(\lead).play;
 
 	}, {
-		"pad A8 released".postln;
+		"pad A8 released - lead OFF".postln;
 		Pbindef(\lead).stop;
 	});
 },27);
+
+/*********************************************************/
 
 ~padB1.free;
 ~padB1 = MIDIFunc.cc({
@@ -847,11 +770,6 @@ MIDIIn.connectAll;
 ~k1 = MIDIFunc.cc({
 	arg ...args;
 	args.postln;
-	if( args[0] > 10, {
-		s.mute;
-	}, {
-		s.unmute;
-	});
 
 },1);
 
@@ -881,9 +799,9 @@ MIDIIn.connectAll;
 ~k5.free;
 ~k5 = MIDIFunc.cc({
 	arg ...args;
-	args.postln;
-
-
+	//args.postln;
+	~vocoder_amp = args[0].linlin(0,127,0.0, 1);
+	("~vocoder_amp = " ++ ~vocoder_amp.round(0.001)).postln;
 },5);
 
 ~k6.free;
@@ -906,3 +824,99 @@ MIDIIn.connectAll;
 	args.postln;
 },8);
 )
+
+
+(
+~drums_1.free;
+~drums_1 = MIDIFunc.noteOn({
+	arg ...args;
+	args.postln;
+	Synth(\bplaym,[\buf,~dirt["909"][0],\amp,2,\rel,0.5,\rate,0.9],addAction:1);
+},44,0); // match any noteOn
+
+
+~drums_2.free;
+~drums_2 = MIDIFunc.noteOn({
+	arg ...args;
+	args.postln;
+	Synth(\bplay,[\buf,d["s"][1],\amp,1,\rel,1,\rate,0.6],addAction:1);
+},45,0); // match any noteOn
+
+~drums_3.free;
+~drums_3 = MIDIFunc.noteOn({
+	arg ...args;
+	args.postln;
+	Synth(\bplaym,[\buf,~dirt["808oh"][0],\amp,0.2,\rel,1,\rate,1],addAction:1);
+},46,0); // match any noteOn
+
+)
+
+
+// BEV STABS //////////////////////////////////////////////////////////////////////////////////////////
+// single voice fragments
+
+// you light up (don't use if Tdef is working)
+(
+Pbindef(\bev_spot,
+	\instrument, \bplay_filt,
+	\buf, ~dirt["bev"][1],
+	\amp, 2,
+	\rel, t.beatDur * 3,
+	\cf, 1000,
+	\rq, 4,
+	\dur, Pseq([4],1),
+	\pos, 0.0,
+	\rate, 1,
+	\addAction, 0
+).quant_([4,0]).stop.play;
+)
+
+
+// bottle of wine (don't use if Tdef is working)
+(
+Pbindef(\bev_spot,
+	\instrument, \bplay_filt,
+	\buf, ~dirt["bev"][1],
+	\amp, 3,
+	\rel, t.beatDur * 4,
+	\cf, 1000,
+	\rq, 4,
+	\dur, Pseq([4],1),
+	\pos, 0.25,
+	\rate, 1,
+	\addAction, 0
+).quant_([4,0]).stop.play;
+)
+
+// story (don't use if Tdef is working)
+(
+Pbindef(\bev_spot,
+	\instrument, \bplay_filt,
+	\buf, ~dirt["bev"][1],
+	\amp, 0.7,
+	\rel, t.beatDur * 2,
+	\cf, 1000,
+	\rq, 4,
+	\dur, Pseq([4],1),
+	\pos, 0.75,
+	\rate, 1,
+	\addAction, 0
+).quant_([4,0]).stop.play;
+)
+
+// you get alive (don't use if Tdef is working)
+(
+Pbindef(\bev_spot,
+	\instrument, \bplay_filt,
+	\buf, ~dirt["bev"][1],
+	\amp, 3,
+	\rel, t.beatDur * 4,
+	\cf, 1000,
+	\rq, 4,
+	\dur, Pseq([4],1),
+	\pos, 0.806,
+	\rate, 1,
+	\addAction,1
+).quant_([4,0]).stop.play;
+)
+Pbindef(\bev_spot).stop

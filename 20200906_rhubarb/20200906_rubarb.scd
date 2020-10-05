@@ -1,6 +1,13 @@
 t = TempoClock.default;
 t.tempo_(136/60);
 
+// CHORDS
+//| F | Bb |
+// other possible chords are
+
+Pbindef.gui
+
+s.plotTree
 
 // MIDI IN ///////////////////////////////////////////////
 MIDIClient.init;
@@ -10,8 +17,104 @@ MIDIIn.connectAll;
 ~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,1.0]);
 ~verb.set(\dec,0.1, \lpf,1500, \wet,1.0);
 
+// PADS ///////////////////////////////////////////////////////////////////////
+(
+Pbindef(\pads).stop;
+Pbindef(\pads,
+	\instrument, \sinfb,
+	\scale, Scale.major,
+	\octave, Pseq([[4,5,6]], inf).clump(3),
+	\root, 5,
+	\mtranspose, Pwhite(0.0, 0.02, inf).clump(3),
+	\degree, Pseq(
+		[
+			Pseq([[0,4,7]],4), // F
+			Pseq([[3,5,7]],2), // Bb
+			//Pseq([[2,5,7]],1), // Dm II rivolto
+			//Pseq([[1,4,6]],2), // C
+		]
+	,inf),
+	\fb, Pwhite(0.2, 0.6, inf).clump(3),
+	\amp, 0.07,
+	\atk, 4,
+	\rel, 4,
+	\pan, Pwhite(-1.0, 1.0, inf).clump(3),
+	\dur, 8,
+).quant_([4]).play;
+)
+Pbindef(\pads,\degree, Pseq([[0,4,7]],inf)).play; // F
+Pbindef(\pads,\degree, Pseq([[3,5,7]],inf)).play; // Bb
+Pbindef(\pads,\degree, Pseq([[1,4,6]],inf)).play; // C
 
 
+// NOISES /////////////////////////////////////////////////////////////////////
+(
+SynthDef(\filterdnoise, {
+	|freq=400,atk=0.1,rel=0.1,amp=1.0,pan=0.0,rq=0.1|
+	var env = EnvGen.ar(Env.perc(atk,rel, curve:[4,-4]),doneAction:2);
+	var sig = Decay2.ar(Impulse.ar(t.tempo*4), 0.0, 0.1) * WhiteNoise.ar();
+	sig = BPF.ar(sig, freq, rq) * env * amp * 10;
+	Out.ar(0, Pan2.ar(sig, pan));
+}).add;
+)
+
+(
+Pbindef(\noises,
+	\instrument, \filterdnoise,
+	\octave, Prand([7],inf),
+	//\degree, Prand([Pn(0,4),Pn(-2,4),Pn(-4,4)],inf),
+	\degree, Prand([Pn(0,4),Pn(-2,4),Pn(-4,4)],inf),
+	\dur,    Pseq([2],inf),
+	\rq, 0.01,
+	\amp, 1.6,
+	\atk, Pkey(\dur) * t.beatDur,
+	\rel, 0.001,
+	\pan, Pseq([[-1, 1],[1, -1]],inf), //Pseg([1.0, -1.0, 1.0],[8,8],\exp,inf),
+	\addAction, 0
+).quant_([4,0]).play;
+)
+Pbindef(\noises).stop;
+Pbindef(\noises,\degree, Pseq([0], inf));
+
+
+// CHIMES /////////////////////////////////////////////////////////////////////
+(
+//Pbindef(\chimes).stop;
+Pbindef(\chimes,
+	\instrument, \sinfb,
+	\scale, Scale.major,
+	\octave, Prand([4,5], inf),
+	\root, 5,
+	\mtranspose, Pwhite(0.0, 0.025, inf),
+	\degree, Prand(
+		[
+		//Pn(Prand([0,4,7],16), 1), // F
+		//Pn(Prand([3,5,7],16), 1), // Bb
+		//Pn(Prand([2,5,7],16), 1), // Dm II rivolto
+		Pseq([
+				Pn(Prand([3,5,7],8), 1), // Bb
+				Pn(Prand([0,4,7],8), 1), // F
+				//Pn(Prand([-1,2,4],8), 1), // Am
+				Pn(Prand([1,3,5],8), 1), // Gm
+				Pn(Prand([0,4,7],8), 1), // F
+			], 1),
+		//Pn(Prand([1,3,6],16), 1), // C
+	]
+	,inf),
+	\fb, Pwhite(0.7, 1.1, inf) * Pseg([0.2, 1.1],[8, 8], \lin, inf),
+	\amp, Pgauss(0.07, 0.001, inf),
+	\atk, 0.0,
+	\rel, Pgauss(1, 0.1, inf),
+	\pan, Pwhite(-1.0, 1.0, inf),
+	\dur, 0.5,
+	\addAction,0
+).quant_([4]);
+)
+Pbindef(\chimes).play;
+Pbindef(\chimes).stop;
+
+
+// BASSES /////////////////////////////////////////////////////////////////////
 (
 Pbindef(\bass).stop;
 Pbindef(\bass,
@@ -28,8 +131,6 @@ Pbindef(\bass,
 	\addAction, 0
 ).quant_([4]).play;
 )
-
-s.scope
 
 // space invader basses: 15 14 13 12 bass
 (
@@ -91,126 +192,30 @@ Pbindef(\bass,
 Pbindef(\bass).play;
 Pbindef(\bass).stop;
 
-(
-//Pbindef(\chimes).stop;
-Pbindef(\chimes,
-	\instrument, \sinfb,
-	\scale, Scale.major,
-	\octave, Prand([4,5], inf),
-	\root, 5,
-	\mtranspose, Pwhite(0.0, 0.025, inf),
-	\degree, Prand(
-		[
-		//Pn(Prand([0,4,7],16), 1), // F
-		//Pn(Prand([3,5,7],16), 1), // Bb
-		//Pn(Prand([2,5,7],16), 1), // Dm II rivolto
-		Pseq([
-				Pn(Prand([3,5,7],8), 1), // Bb
-				Pn(Prand([0,4,7],8), 1), // F
-				//Pn(Prand([-1,2,4],8), 1), // Am
-				Pn(Prand([1,3,5],8), 1), // Gm
-				Pn(Prand([0,4,7],8), 1), // F
-			], 1),
-		//Pn(Prand([1,3,6],16), 1), // C
-	]
-	,inf),
-	\fb, Pwhite(0.7, 1.1, inf) * Pseg([0.2, 1.1],[8, 8], \lin, inf),
-	\amp, Pgauss(0.07, 0.001, inf),
-	\atk, 0.0,
-	\rel, Pgauss(1, 0.1, inf),
-	\pan, Pwhite(-1.0, 1.0, inf),
-	\dur, 0.5,
-	\addAction,0
-).quant_([4]);
-)
-Pbindef(\chimes).stop;
-Pbindef(\chimes).play;
-
-(
-Pbindef(\pads).stop;
-Pbindef(\pads,
-	\instrument, \sinfb,
-	\scale, Scale.major,
-	\octave, Pseq([[4,5,6]], inf).clump(3),
-	\root, 5,
-	\mtranspose, Pwhite(0.0, 0.02, inf).clump(3),
-	\degree, Pseq(
-		[
-			Pseq([[0,4,7]],4), // F
-			Pseq([[3,5,7]],2), // Bb
-			//Pseq([[2,5,7]],1), // Dm II rivolto
-			//Pseq([[1,4,6]],2), // C
-		]
-	,inf),
-	\fb, Pwhite(0.2, 0.6, inf).clump(3),
-	\amp, 0.07,
-	\atk, 4,
-	\rel, 4,
-	\pan, Pwhite(-1.0, 1.0, inf).clump(3),
-	\dur, 8,
-).quant_([4]).play;
-)
-Pbindef(\pads,\degree, Pseq([[0,4,7]],inf)).play; // F
-Pbindef(\pads,\degree, Pseq([[3,5,7]],inf)).play; // Bb
-Pbindef(\pads,\degree, Pseq([[1,4,6]],inf)).play; // C
 
 
-(
-SynthDef(\filterdnoise, {
-	|freq=400,atk=0.1,rel=0.1,amp=1.0,pan=0.0,rq=0.1|
-	var env = EnvGen.ar(Env.perc(atk,rel, curve:[4,-4]),doneAction:2);
-	var sig = Decay2.ar(Impulse.ar(t.tempo*4), 0.0, 0.1) * WhiteNoise.ar();
-	sig = BPF.ar(sig, freq, rq) * env * amp * 10;
-	Out.ar(0, Pan2.ar(sig, pan));
-}).add;
-)
-
-
-(
-Pbindef(\noises,
-	\instrument, \filterdnoise,
-	\octave, Prand([7],inf),
-	\degree, Prand([Pn(0,4),Pn(-2,4),Pn(-4,4)],inf),
-	\dur,    Pseq([2],inf),
-	\rq, 0.01,
-	\amp, 1.6,
-	\atk, Pkey(\dur) * t.beatDur,
-	\rel, 0.001,
-	\pan, Pseq([[-1, 1],[1, -1]],inf), //Pseg([1.0, -1.0, 1.0],[8,8],\exp,inf),
-	\addAction, 0
-).quant_([4,0]).play;
-)
-Pbindef(\noises).stop;
-
-
-
-Pbindef(\noises,\degree, Pseq([0], inf));
-
+// DRUMS ////////////////////////////////////////////////////////////////////////
 (
 
 // 1 on 4
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,4,\amp,0.2,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,4,\amp,1,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
 
 // ° , , °° |
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pseq([3.5,0.5],inf),\amp,0.2,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pseq([3.5,0.5],inf),\amp,1,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pseq([3.5,0.25,0.25],inf),\amp,1,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
 
 // fof
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,0.2,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,1,\rel,0.1,\rate,1,\addAction,1).quant_(4).play;
 
-// fof, some slight variation
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],
-	\dur,Pwrand([1, Pn(0.5,2)],[6,1].normalizeSum,inf),
-	\amp,0.2,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
-
-
+Pbindef(\k, \amp, 1);
 
 Pbindef(\s1,
 	\instrument,\bplaym,
 	\buf,Pindex(~dirt["invaders"],[10],inf),
 	\dur,2,
-	\amp, 0.3,
+	\amp, 0.7,
 	\atk, 0.0,
-	\rel, 0.1,
+	\rel, 0.07,
 	\rate, 2.5,
 	\addAction,Prand([0,1], inf)
 ).quant_([4,1]).play;
@@ -227,6 +232,9 @@ Pbindef(\s2,
 	\addAction, 1
 ).quant_([4,1]).stop.play;
 )
+
+// fof, some slight variation
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pwrand([1, Pn(0.5,2)],[6,1].normalizeSum,inf),\amp,0.2,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
 
 
 (
@@ -257,6 +265,39 @@ Pbindef(\alert).play;
 
 {PlayBuf.ar(1,d["k"][0], doneAction:2)*4}.play;
 
+
+// ALTERNATE DRUMS
+(
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,4,\amp,0.4,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
+
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pseq([3.5,0.5],inf),\amp,0.4,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
+
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,0.4,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
+
+
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],
+	\dur,Pwrand([1, Pn(0.5,2)],[6,1].normalizeSum,inf),
+	\amp,0.4,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
+
+Pbindef(\s1,\instrument,\bplay,\buf,d["s"][0],\dur,2,\amp,0.5,\rel,0.1,\rate,0.6,\addAction,1).quant_([4,1]).play;
+
+Pbindef(\s2,
+	\instrument,\bplaym,
+	//\buf, Pindex(~dirt["invaders"], Prand((0..~dirt["invaders"].size-1), inf),inf),
+	\buf, d["sstick"][0], //0,9
+	\dur, Prand([0.5, 1,2],inf),
+	\amp, Pgauss(0.5, 0.1, inf) * 1.0,
+	\atk, 0.0,
+	\rel, 0.5,
+	\rate, 0.3 * (Prand([0,2,4], inf)).midiratio,
+	\addAction, Pwrand([1,0], [10,1].normalizeSum, inf)
+).quant_([4,1]).stop.play;
+
+Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel,0.07,\amp,Pexprand(0.05,1)*0.5,\rate,1.7,\addAction,1).quant_(1).play;
+)
+
+
+// FXS ////////////////////////////////////////////////////////////////////////
 (
 Pbindef(\invaders).stop;
 Pbindef(\invaders,
@@ -270,8 +311,6 @@ Pbindef(\invaders,
 	\addAction,0
 ).quant_([4,1]).stop.play;
 )
-
-
 
 (
 Pbindef(\alert).stop;
@@ -288,6 +327,8 @@ Pbindef(\alert,
 ).quant_([4,1]).stop.play;
 )
 
+
+// LEADS //////////////////////////////////////////////////////////////////////
 (
 Pbindef(\melody,
 	\instrument, \sinfb,
@@ -309,7 +350,6 @@ Pbindef(\melody).stop;
 Pbindef(\noises).stop;
 Pbindef(\pads).stop;
 )
-
 
 
 (
@@ -334,39 +374,7 @@ Pbindef(\melodyC).stop;
 
 
 
-
-// alternate drums
-(
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,4,\amp,0.4,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
-
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pseq([3.5,0.5],inf),\amp,0.4,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
-
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,0.4,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
-
-
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],
-	\dur,Pwrand([1, Pn(0.5,2)],[6,1].normalizeSum,inf),
-	\amp,0.4,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
-
-Pbindef(\s1,\instrument,\bplay,\buf,d["s"][0],\dur,2,\amp,0.5,\rel,0.1,\rate,0.6,\addAction,1).quant_([4,1]).play;
-
-Pbindef(\s2,
-	\instrument,\bplaym,
-	//\buf, Pindex(~dirt["invaders"], Prand((0..~dirt["invaders"].size-1), inf),inf),
-	\buf, d["sstick"][0], //0,9
-	\dur, Prand([0.5, 1,2],inf),
-	\amp, Pgauss(0.5, 0.1, inf),
-	\atk, 0.0,
-	\rel, 0.5,
-	\rate, 0.3 * (Prand([0,2,4], inf)).midiratio,
-	\addAction, Pwrand([1,0], [10,1].normalizeSum, inf)
-).quant_([4,1]).stop.play;
-
-Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel,0.1,\amp,Pexprand(0.05,1)*0.1, \addAction,1).quant_(1).play;
-)
-
-
-// midi controller
+// MIDI CONTROLS /////////////////////////////////////////////////////
 
 
 
@@ -379,10 +387,10 @@ Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel,0.1,\amp,Pexprand(
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A1 pressed".postln;
+		"pad A1 pressed - kick ON".postln;
 		Pbindef(\k).play;
 	}, {
-		"pad A1 released".postln;
+		"pad A1 released - kick OFF".postln;
 		Pbindef(\k).stop;
 
 	});
@@ -393,11 +401,11 @@ Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel,0.1,\amp,Pexprand(
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A2 pressed".postln;
+		"pad A2 pressed - snare ON".postln;
 		Pbindef(\s1).play;
 		Pbindef(\s2).play;
 	}, {
-		"pad A2 released".postln;
+		"pad A2 released - snare OFF".postln;
 		Pbindef(\s1).stop;
 		Pbindef(\s2).stop;
 	});
@@ -409,10 +417,10 @@ Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel,0.1,\amp,Pexprand(
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A3 pressed".postln;
+		"pad A3 pressed - hihat ON".postln;
 		Pbindef(\hh).play;
 	}, {
-		"pad A3 released".postln;
+		"pad A3 released - hihat OFF".postln;
 		Pbindef(\hh).stop;
 	});
 },22);
@@ -422,11 +430,11 @@ Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel,0.1,\amp,Pexprand(
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A4 pressed".postln;
+		"pad A4 pressed - shepard ON".postln;
 		Tdef(\activate_shepard).play;
 
 	}, {
-		"pad A4 released".postln;
+		"pad A4 released - shepard OFF".postln;
 		Tdef(\deactivate_shepard).play;
 	});
 },23);
@@ -437,11 +445,11 @@ Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel,0.1,\amp,Pexprand(
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad A5 pressed".postln;
+		"pad A5 pressed - bass ON".postln;
 		Pbindef(\bass).play;
 
 	}, {
-		"pad A5 released".postln;
+		"pad A5 released - bass OFF".postln;
 		Pbindef(\bass).stop;
 
 	});
@@ -453,11 +461,11 @@ Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel,0.1,\amp,Pexprand(
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A6 pressed".postln;
+		"pad A6 pressed - pads ON".postln;
 		Pbindef(\pads).play;
 
 	}, {
-		"pad A6 released".postln;
+		"pad A6 released - pads OFF".postln;
 		Pbindef(\pads).stop;
 
 	});
@@ -469,11 +477,11 @@ Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel,0.1,\amp,Pexprand(
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad A7 pressed".postln;
+		"pad A7 pressed - chimes ON".postln;
 		Pbindef(\chimes).play;
 
 	}, {
-		"pad A7 released".postln;
+		"pad A7 released - chimes OFF".postln;
 		Pbindef(\chimes).stop;
 
 	});
@@ -485,11 +493,11 @@ Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel,0.1,\amp,Pexprand(
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad A8 pressed".postln;
+		"pad A8 pressed - melody ON".postln;
 		Pbindef(\melody).play;
 
 	}, {
-		"pad A8 released".postln;
+		"pad A8 released - melody OFF".postln;
 		Pbindef(\melody).stop;
 	});
 },27);
@@ -570,10 +578,10 @@ Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel,0.1,\amp,Pexprand(
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad B6 pressed".postln;
+		"pad B6 pressed - melodyC ON".postln;
 		Pbindef(\melodyC).play;
 	}, {
-		"pad B6 released".postln;
+		"pad B6 released - melodyC OFF".postln;
 		Pbindef(\melodyC).stop;
 
 	});
@@ -585,10 +593,10 @@ Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel,0.1,\amp,Pexprand(
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad B7 pressed".postln;
+		"pad B7 pressed - noises ON".postln;
 		Pbindef(\noises).play;
 	}, {
-		"pad B7 released".postln;
+		"pad B7 released - noises OFF".postln;
 		Pbindef(\noises).stop;
 	});
 },34);
@@ -599,12 +607,12 @@ Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel,0.1,\amp,Pexprand(
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad B8 pressed".postln;
+		"pad B8 pressed - alert/invaders ON".postln;
 		Pbindef(\alert).play;
 		Pbindef(\invaders).play;
 
 	}, {
-		"pad B8 released".postln;
+		"pad B8 released - alert/invaders OFF".postln;
 		Pbindef(\alert).stop;
 		Pbindef(\invaders).stop;
 
@@ -623,44 +631,40 @@ Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel,0.1,\amp,Pexprand(
 ~k1 = MIDIFunc.cc({
 	arg ...args;
 	args.postln;
-	~amp_bass = args[0].linlin(0,127,0.0, 1.0);
+	//~amp_bass = args[0].linlin(0,127,0.0, 1.0);
+	//("~amp_bass = " ++ ~amp_bass.round(0.001)).postln;
 
 },1);
 
 ~k2.free;
 ~k2 = MIDIFunc.cc({
 	arg ...args;
-	args.postln;
-	~verb.set(\dec,2, \lpf,5000, \wet,args[0].linlin(0, 127, 0.0, 1.0) );
-
+	var wet = args[0].linlin(0, 127, 0.0, 1.0);
+	//args.postln;
+	~verb.set(\dec,2, \lpf,5000, \wet, wet);
+	("verb wet = " ++ wet.round(0.001)).postln;
 },2);
 
 ~k3.free;
 ~k3 = MIDIFunc.cc({
 	arg ...args;
 	args.postln;
-	~amp_dial = args[0].linlin(0,127,0.0, 1.0);
-	/*
-	if( ~dial != nil, {
-		~dial.set(\amp, ~amp_dial*2);
-	});
-	*/
 },3);
 
 ~k4.free;
 ~k4 = MIDIFunc.cc({
 	arg ...args;
 	args.postln;
-	~amp_mel = args[0].linlin(0,127,0.0, 1.8);
-
+	//~amp_mel = args[0].linlin(0,127,0.0, 1.8);
+	//("~amp_mel = " ++ ~amp_mel.round(0.001)).postln;
 },4);
 
 ~k5.free;
 ~k5 = MIDIFunc.cc({
 	arg ...args;
-	args.postln;
-
-
+	//args.postln;
+	~vocoder_amp = args[0].linlin(0,127,0.0, 1);
+	("~vocoder_amp = " ++ ~vocoder_amp.round(0.001)).postln;
 },5);
 
 ~k6.free;
@@ -680,9 +684,9 @@ Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel,0.1,\amp,Pexprand(
 ~k8.free;
 ~k8 = MIDIFunc.cc({
 	arg ...args;
-	args.postln;
+	//args.postln;
 	~amp_shepards = args[0].linlin(0,127,0.0, 1.5);
-
+	("~amp_shepard = " ++ ~amp_shepards.round(0.001)).postln;
 },8);
 )
 
