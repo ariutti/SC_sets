@@ -54,6 +54,7 @@ Pbindef(\pads,
 	\amp, 0.9,
 	\legato, 1.01
 ).quant_(4);
+Pbindef(\pads).play;
 )
 
 Pbindef(\pads).stop;
@@ -84,7 +85,7 @@ Pbindef(\bass,
 
 Pbindef(\bass).stop;
 
-
+p.pop
 ~k = Buffer.read(s, "/home/nicola/Documenti/repos/SC_workshop/sounds/Linn Kick 1.wav");
 ~sn = Buffer.read(s, "/home/nicola/Documenti/repos/SC_workshop/sounds/Crsnred_scr_snr_6.wav");
 ~hh = Buffer.read(s,"/home/nicola/Documenti/repos/SC_workshop/sounds/Crsnred_scr_ht_3.wav");

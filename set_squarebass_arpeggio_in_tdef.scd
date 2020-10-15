@@ -1,4 +1,5 @@
 "mySetup/mySetup.scd".loadRelative;
+p.clear
 
 (
 Tdef(\arp, {

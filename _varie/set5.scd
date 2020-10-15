@@ -2,6 +2,13 @@
 
 "./mySetup/mySetup.scd".loadRelative;
 
+//start proxyspace
+p=ProxySpace.push(s);
+p.makeTempoClock;
+p.clock = TempoClock.default;
+//give proxyspace a tempo
+p.clock.tempo = 120/60;
+
 (
 SynthDef(\noise, {
 	|out=0, amp=1.0, pan=0.0, atk=0.01, rel=0.4|

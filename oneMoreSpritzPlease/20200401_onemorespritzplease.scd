@@ -1,8 +1,15 @@
-Pbindef(\k,\instrument,\bplaym,\buf,d["k"][1],\dur,4,\amp,3,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
-Pbindef(\s,\instrument,\bplaym,\buf,d["sstick"][0],\dur,Pwrand([2,Pseq([0.125,0.125+0.25+0.5+1],1)],[10,1].normalizeSum, inf) ,\amp,1,\rel,0.1,\rate,0.4,\addAction,0).quant_([4,1]).play;
+t = TempoClock.default;
+t.tempo_(60/60);
+Pbindef.gui;
 
-Pbindef(\s,\instrument,\bplaym,\buf,d["808sd"][9],\dur,1 /*Pwrand([2,Pseq([0.125,0.125+0.25+0.5+1],1)],[10,1].normalizeSum, inf)*/,\amp,2,\rel,1,\rate,1,\addAction,1).quant_([1,1]).stop;
+~tonica = 0;
 
+~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,1.0]);
+~verb.set(\dec,0.1, \lpf,1500, \wet,1.0);
+
+
+
+// CHORD CHANGER //////////////////////////////////////////////////////////////////////////
 (
 Tdef(\tonicachange, {
 	var seq  = Pseq([0, -2, 3, 4], inf).asStream;
@@ -16,14 +23,20 @@ Tdef(\tonicachange, {
 )
 
 (
-Pbindef(\A,
+Tdef(\tonicachange).stop;
+~tonica = 0;
+)
+
+// BASS ///////////////////////////////////////////////////////////////////////////////////
+(
+Pbindef(\bass,
 	\instrument, \sinfb,
 	\scale, Scale.major,
 	\octave, [3,4], //Prand([4,5,6],inf),
 	\degree, Pfunc({~tonica}),
 	\fb, Pgauss(0.9, 0.1, inf),
 
-	\amp, 0.3,
+	\amp, 1,
 	\atk, 0.0,
 	\rel, 0.2,
 	\dur, 0.25,
@@ -31,12 +44,10 @@ Pbindef(\A,
 	\addAction,1
 ).quant_([4,0]).play;
 )
+Pbindef(\bass).stop;
 
 
-~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,1.0]);
-~verb.set(\dec,0.1, \lpf,1500, \wet,1.0);
-
-
+// PADS ///////////////////////////////////////////////////////////////////////////////////
 (
 SynthDef(\varsaw, {
 	|freq=400,atk=0.1,rel=0.1,amp=1.0,pan=0.0,width=0.01|
@@ -45,26 +56,6 @@ SynthDef(\varsaw, {
 	Out.ar(0, Pan2.ar(sig, pan));
 }).add;
 )
-
-
-(
-Pbindef(\B,
-	\instrument, \square,
-	\scale, Scale.major,
-	\octave, Prand([4,6],inf).clump(2),
-	\degree, Pfunc({~tonica}) + Pseq([[2,4]],inf),
-	\mtranspose, Pwhite(-0.01, 0.01, inf).clump(2),
-	\width, Pseg([0.5, 0.01, 0.5], [4], \exp, inf),
-	\fc, Pseg([1000, 6000, 1000], [4], \exp, inf),
-	\amp, Pgauss(0.1, 0.01, inf).clump(4),
-	\atk, 1,
-	\rel, 4,
-	\dur, 0.5,
-	\pan, Pwhite(-1.0 ,1.0, inf).clump(2),
-	\addAction,0
-).quant_([4,0,0.1]).play;
-)
-
 
 (
 SynthDef(\sin, {
@@ -88,7 +79,67 @@ SynthDef(\square, {
 
 
 (
-Pbindef(\C,
+Pbindef(\pads,
+	\instrument, \square,
+	\scale, Scale.major,
+	\octave, Prand([4,6],inf).clump(2),
+	\degree, Pfunc({~tonica}) + Pseq([[2,4]],inf),
+	\mtranspose, Pwhite(-0.01, 0.01, inf).clump(2),
+	\width, Pseg([0.5, 0.01, 0.5], [4], \exp, inf),
+	\fc, Pseg([1000, 6000, 1000], [4], \exp, inf),
+	\amp, Pgauss(0.1, 0.01, inf).clump(4),
+	\atk, 1,
+	\rel, 4,
+	\dur, 0.5,
+	\pan, Pwhite(-1.0 ,1.0, inf).clump(2),
+	\addAction,0
+).quant_([4,0,0.1]).play;
+)
+Pbindef(\pads).stop;
+
+// DRUMS //////////////////////////////////////////////////////////////////////////////////
+
+
+(
+Pbindef(\k,\instrument,\bplaym,\buf,d["k"][1],\dur,4,\amp,3,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
+Pbindef(\s,\instrument,\bplaym,\buf,d["sstick"][0],\dur,Pwrand([2,Pseq([0.125,0.125+0.25+0.5+1],1)],[10,1].normalizeSum, inf) ,\amp,1,\rel,0.1,\rate,0.4,\addAction,0).quant_([4,1]).play;
+Pbindef(\s,\instrument,\bplaym,\buf,d["808sd"][9],\dur,1 /*Pwrand([2,Pseq([0.125,0.125+0.25+0.5+1],1)],[10,1].normalizeSum, inf)*/,\amp,2,\rel,1,\rate,1,\addAction,1).quant_([1,1]).stop;
+)
+
+
+/* ALTERNATE DRUMS */
+
+(
+Pbindef(\k,\instrument,\bplaym,\buf,d["k"][1],\dur,0.5,\amp,3,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
+Pbindef(\s,\instrument,\bplaym,\buf,d["sstick"][0],\dur,Pwrand([2,Pseq([0.125,0.125+0.25+0.5+1],1)],[10,1].normalizeSum, inf) ,\amp,1,\rel,0.1,\rate,0.4,\addAction,0).quant_([4,1]).play;
+Pbindef(\s808,\instrument,\bplaym,\buf,d["808sd"][9],\dur,1 /*Pwrand([2,Pseq([0.125,0.125+0.25+0.5+1],1)],[10,1].normalizeSum, inf)*/,\amp,2,\rel,1,\rate,1,\addAction,0).quant_([1,0.25]).stop;
+)
+
+(
+//aggressive
+Pbindef(\k,
+	\instrument, \kickFm,
+	\freq, (48-12).midicps,
+	\dur, 0.5,
+	\atk, 0.003, \rel, 0.25,
+	\fatk, 0.001,\frel, 0.05, \fenvamt, 100,
+	\fm, 1000,
+	\mi, 500,
+	\matk, 0.001, \mrel, 0.01,
+	\dist, 4,
+	\amp, 3,
+    \addAction, 1
+).quant_([4]).stop.play;
+)
+Pbindef(\k).stop;
+Pbindef(\s,\instrument,\bplay,\buf,d["s"][0],\dur,1,\amp,2,\rel,0.1,\rate,0.4,\addAction,1).quant_([4,0.5]).stop.play;
+);
+
+
+// LEADS //////////////////////////////////////////////////////////////////////////////////
+
+(
+Pbindef(\lead,
 	\instrument, \sinfb,
 	\scale, Scale.major,
 	\octave, [5,7],
@@ -102,8 +153,11 @@ Pbindef(\C,
 	\pan, Pseries(0.0, 0.2, inf).fold(-1.0, 1.0),
 	\addAction,0
 ).quant_([4,0]).play;
+)
 
-Pbindef(\D,
+(
+// lead offtempo
+Pbindef(\lead2,
 	\instrument, \fm2,
 	\scale, Scale.major,
 	\octave, 5,
@@ -111,15 +165,18 @@ Pbindef(\D,
 	\width, Pwhite(0.01, 0.5, inf),
 	\mr, 16,
 	\mi, 400,
-	\amp, 0.5,
+	\amp, 4,
 	\atk, 0.01,
-	\rel, 1,
+	\rel, 0.5,
 	\dur, Pseq([1,1,1,1,1,1,1],inf),
 	\pan, Pseries(0.0, -0.2, inf).fold(-1.0, 1.0),
-	\addAction,0
+	\addAction,1
 ).quant_([4,0.5]).play;
 )
+Pbindef(\lead).stop;
+Pbindef(\lead2).stop;
 
+// CHOIR //////////////////////////////////////////////////////////////////////////////////
 
 (
 Pbindef(\choir,
@@ -146,14 +203,14 @@ Pbindef(\choir,
 ).quant_(4).play;
 )
 Pbindef(\choir).play;
+Pbindef(\choir).stop;
 
-Pbindef.gui
 
 
 
 // prosegui da qui
 (
-Pbindef(\C,
+Pbindef(\lead,
 	\instrument, \sinfb,
 	\scale, Scale.major,
 	\octave, [4,5,7],
@@ -168,6 +225,7 @@ Pbindef(\C,
 	\addAction,0
 ).quant_([4,0]).play;
 
+
 Tdef(\tonicachange, {
 	var seq  = Pseq([-2, 3, 4], inf).asStream;
 	var time = Pseq([4, 4, 4], inf).asStream;
@@ -179,7 +237,8 @@ Tdef(\tonicachange, {
 }).quant_([4,0]).stop.play;
 )
 
-Pbindef(\C,
+
+Pbindef(\lead,
 	\instrument, \sinfb,
 	\scale, Scale.major,
 	\octave, [5,7],
@@ -193,44 +252,4 @@ Pbindef(\C,
 	\pan, Pseries(0.0, 0.2, inf).fold(-1.0, 1.0),
 	\addAction,0
 ).quant_([4,0]).play;
-)
-
-Pbindef(\k,\instrument,\bplaym,\buf,d["k"][1],\dur,0.5,\amp,3,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
-Pbindef(\s,\instrument,\bplaym,\buf,d["sstick"][0],\dur,Pwrand([2,Pseq([0.125,0.125+0.25+0.5+1],1)],[10,1].normalizeSum, inf) ,\amp,1,\rel,0.1,\rate,0.4,\addAction,0).quant_([4,1]).play;
-
-Pbindef(\s808,\instrument,\bplaym,\buf,d["808sd"][9],\dur,1 /*Pwrand([2,Pseq([0.125,0.125+0.25+0.5+1],1)],[10,1].normalizeSum, inf)*/,\amp,2,\rel,1,\rate,1,\addAction,0).quant_([1,0.25]).stop;
-
-
-(
-//aggressive
-Pbindef(\k,
-	\instrument, \kickFm,
-	\freq, (48-12).midicps,
-	\dur, 0.5,
-	\atk, 0.003, \rel, 0.25,
-	\fatk, 0.001,\frel, 0.05, \fenvamt, 100,
-	\fm, 1000,
-	\mi, 500,
-	\matk, 0.001, \mrel, 0.01,
-	\dist, 4,
-	\amp, 1,
-    \addAction, 1
-).quant_(1).play;
-)
-
-Pbindef(\k).stop;
-(
-//aggressive
-Pbindef(\s,
-	\instrument, \snareFm,
-	\freq, 140,
-	\dur, 1,
-	\atk, 0.003, \rel, 1,
-	\fatk, 0.001,\frel, 0.1, \fenvamt, 100,
-	\mi, 10,
-	\matk, 0.0, \mrel, 0.2,
-	\dist, 1,
-	\amp, 0.5,
-    \addAction, 1
-).quant_([1,0.5]).play;
-);
+Pbindef(\lead).stop;

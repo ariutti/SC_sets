@@ -4,6 +4,7 @@ p = ProxySpace.push(s.boot);
 
 p.quant_(4)
 p.clock.tempo = 2
+p.clear
 
 ~tlapan = Pbind(\instrument, \bplaym, \buf, Pindex(d["tlapan"],Pseq([0,1,1],inf),inf), \dur, Pseq([2, 1, 1], inf), \amp, Pseq([0.6, 0.4, 0.3]*2, inf));
 ~tlapan.quant_(2)
@@ -59,7 +60,7 @@ p.clock.tempo = 2
 ~goh.stop(10);
 
 
-~bass = Pbind(\instrument, \ring1, \a, 7, \d, 1, \dur, 0.5, \octave, Prand([3],inf), \degree, 0, \root, Pkr(~root), \amp, 0.25);
+~bass = Pbind(\instrument, \ring1, \a, 7, \d, 1, \dur, 0.5, \octave, Prand([3],inf), \degree, 0, \root, Pkr(~root), \amp, 1);
 ~bass.quant_(4)
 ~bass.play();
 ~bass.stop(4);

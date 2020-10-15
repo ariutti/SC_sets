@@ -10,6 +10,7 @@ var winenv = Env([0, 1, 0], [0.0, 0.5], [8, -8]);
 
 ~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,1.0]);
 ~verb.set(\dec,2, \lpf,5000, \wet,1.0);
+~verb.set(\dec,2, \lpf,5000, \wet,0.1);
 ~verb.free;
 
 (

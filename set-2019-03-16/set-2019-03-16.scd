@@ -1,14 +1,15 @@
 // SET 2019-03-16
+t = TempoClock.default;
+t.tempo_(120/60);
 
-"Setup/Setup.scd".loadRelative;
-
-p.clear
+~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,1.0]);
+~verb.set(\dec,0.1, \lpf,1500, \wet,1.0);
 
 (
-d[\scale] = Scale.minor;
-~chords = Pbind(\instrument,\bpfsaw,
+Pbindef(\pads,
+	\instrument,\bpfsaw,
     \dur,Pwhite(4.5,7.0,inf),
-    \scale,d[\scale],
+    \scale, Scale.minor,
     \degree,Pwrand([[0,2,4],[3,5,7],[4,6,8]],[0.5,0.25,0.25],inf),
     \cfmin,100,
     \cfmax,1500,
@@ -19,83 +20,94 @@ d[\scale] = Scale.minor;
     \lsf,1000,
     \octave,Pwrand([4,3,5],[0.6,0.3,0.1],inf),
     \amp,Pwhite(0.6,0.9),
-	\out,[0,1]);
-~chords.play;
+	\out,[0,1],
+	\addAction, 0
+).quant_([4]).stop.play;
 )
+Pbindef(\pads).stop;
 
 (
-~sinfb = Pbind(\instrument,\sinfb,\scale,d[\scale],\root,0,\octave,[4,5],\degree,Place([0,0,2,[4,5,6],[7,1,2],[6,7,8,9],[10,12,14,15],7,6,5],inf),\dur,Pbjorklund2(Pwhite(6,8),8)/4,\amp,0.1,\fb,0.9,\rel,0.3, \pan, Pwhite(-0.8, 0.8));
-~sinfb.play(fadeTime:4);
+Pbindef(\arpeggio,
+	\instrument,\sinfb,
+	\scale,Scale.minor,
+	\root,0,
+	\octave,[4,5],
+	\degree,Place([0,0,2,[4,5,6],[7,1,2],[6,7,8,9],[10,12,14,15],7,6,5],inf),
+	\dur,Pbjorklund2(Pwhite(6,8),8)/4,
+	\amp,0.1,
+	\fb,0.9,
+	\rel,0.3,
+	\pan, Pwhite(-0.8, 0.8),
+	\addAction, 1
+).quant_([4]).play;
 )
+Pbindef(\arpeggio).stop;
 
 // then start with the bassline
 (
-~ring1 = Pbind(\instrument,\ring1,\f,Pkey(\freq),\scale,d[\scale],\root,60,\degree,0,\octave,-2,\dur,Pbjorklund2(1, 8,inf)/4,\d,0.6,\a,10,\pan,0,\amp,0.5);
-~ring1.play(fadeTime:5);
+Pbindef(\bass,
+	\instrument,\ring1,
+	\scale,Scale.minor,
+	\root, 0,
+	\degree, 0,
+	\octave, 3,
+	\dur, Pbjorklund2(1, 8,inf)/4,
+	\atk, 0.01, \rel,0.6,\dist,15,
+	\pan,0,
+	\amp, 0.6,
+	\addAction,1
+).quant_([4]).play;
 )
+Pbindef(\bass).stop;
+Pbindef(\bass).clear;
+
+Pbindef.gui
 
 // change the bass pattern
-~ring1 = Pbind(\instrument,\ring1,\f,Pkey(\freq),\scale,d[\scale],\root,60,\degree,0,\octave,-2,\dur,Pbjorklund2(5, 8,inf)/4,\d,0.6,\a,10,\pan,0,\amp,0.5);
+Pbindef(\bass,\dur,Pbjorklund2(5, 8,inf)/4, \rel, 0.3);
 
 
 (
-//~chords.play(fadeTime:0.125);
-~sinfb = Pbind(\instrument,\sinfb,\scale,d[\scale],\root,0,\octave,[4,5],\degree,Place([0,0,2,[4,5,6],[7,1,2],[6,7,8,9],[10,12,14,15],7,6,5],inf),\dur,Pbjorklund2(Pwhite(6,8),8)/4,\amp,0.2,\fb,0.9,\rel,0.125,\pan, Pwhite(-0.8, 0.8));
-//~sn = Pbind(\instrument,\bplay,\buf,d["s"][0],\dur,Pseq([1, Pbjorklund2(1, 8, inf)/4],inf),\amp,0.6, \rate, 0.25, \rel, 0.125);
-~k = Pbind(\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,1,\rel,0.125);
-//~ring1 = Pbind(\instrument,\ring1,\f,Pkey(\freq),\scale,d[\scale],\root,60,\degree,0,\octave,-2,\dur,Pbjorklund2(5, 8,inf)/4,\d,0.6,\a,10,\pan,0,\amp,0.5);
-~k.play; ~ring1.play; ~sinfb.play;
+Pbindef(\arpeggio,
+	\instrument,\sinfb,
+	\scale,Scale.minor,
+	\root,0,
+	\octave,[4,5],
+	\degree,Place([0,0,2,[4,5,6],[7,1,2],[6,7,8,9],[10,12,14,15],7,6,5],inf),
+	\dur,Pbjorklund2(Pwhite(6,8),8)/4,
+	\amp,0.2,
+	\fb,0.9,
+	\rel,0.125,
+	\pan, Pwhite(-0.8, 0.8),
+	\addAction, 1
+);
+Pbindef(\k, \instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,1,\rel,0.125,\addAction,1).quant_([4]).play;
+)
+
+(
+Pbindef(\s, \instrument,\bplay,\buf,d["s"][0],\dur,Pseq([2, Pbjorklund2(1, 8, inf)/4], inf),\amp,0.3, \rate, 0.25, \rel, 0.12,\addAction,1).quant_([4,1]).stop.play;
+Pbindef(\k, \instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,1,\rel,0.125).quant_([4]).play;
+)
+
+(
+Pbindef(\stabs,
+	\instrument,\sinfb,
+	\scale,Scale.minor,
+	\root, 0,
+	\octave, 6,
+	\degree, 0,
+	\dur,Pseq([Pseq([0.25],3),Pseq([2], 2)],inf),
+	\amp, 0.4,
+	\fb, 2,
+	\rel,0.03,
+	\pan, Pwhite(-1.0, 1.0, inf),
+	\addAction,0
+).quant_([4]).play;
 )
 
 
 (
-~verbSend = ~sinfb;
-~room = {100};
-~time = {8};
-~verb = {GVerb.ar(~verbSend, ~room, ~time, mul:0.25)};
-~verb.play(fadeTime:0.1);
+Pbindef(\s, \instrument,\bplay,\buf,d["s"][0],\dur,Pseq([2, Pbjorklund2(1, 8, inf)/4], inf),\amp,0.5, \rate, 0.25, \rel, 0.12);
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,1,\rel,0.125);
+Pbindef(\arpeggio,\instrument,\sinfb,\scale,d[\scale],\root,0,\octave,6,\degree,0,\dur,Pseq([Pseq([0.25],3),Pseq([2], 2)],inf),\amp,0.2,\fb,2,\rel,0.03);
 )
-
-(
-~sn = Pbind(\instrument,\bplay,\buf,d["s"][0],\dur,Pseq([2, Pbjorklund2(1, 8, inf)/4], inf),\amp,0.3, \rate, 0.25, \rel, 0.12);
-~k = Pbind(\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,1,\rel,0.125);
-~k.play; ~sn.play;
-)
-
-(
-~sinfb1 = Pbind(\instrument,\sinfb,\scale,d[\scale],\root,0,\octave,6,\degree,0,\dur,Pseq([Pseq([0.25],3),Pseq([2], 2)],inf),\amp,0.2,\fb,2,\rel,0.03, \pan, -0.8);
-~sinfb1.play;
-~verbSend = ~sinfb + (~sinfb1 * 1.1) + (~sn*0.4!2);
-)
-
-(
-~verbSend = {~sn*0.4!2};
-~chords.stop(0.1);
-~sinfb1.stop(0.1);
-~ring1.stop(0.1);
-~sinfb.stop(0.1);
-)
-
-
-(
-~k.quant_(4);
-~sn.quant_(4);
-~sn = Pbind(\instrument,\bplay,\buf,d["s"][0],\dur,Pseq([2, Pbjorklund2(1, 8, inf)/4], inf),\amp,0.5, \rate, 0.25, \rel, 0.12);
-~k = Pbind(\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,1,\rel,0.125);
-~sinfb1 = Pbind(\instrument,\sinfb,\scale,d[\scale],\root,0,\octave,6,\degree,0,\dur,Pseq([Pseq([0.25],3),Pseq([2], 2)],inf),\amp,0.2,\fb,2,\rel,0.03, \pan, -0.8);
-~sinfb1.play; ~k.play; ~sn.play; ~ring1.play(fadeTime:0.0); ~sinfb.play(fadeTime:0.0);
-~verbSend = ~sinfb + (~sinfb1 * 1.1) + (~sn*0.4);
-)
-
-~chords.play;
-
-(
-~verb.stop(0.1);
-~sn.stop(0.1);
-~k.stop(0.1)
-)
-
-~chords.stop(4);
-~ring1.stop(0.0)
-p.clear(0.1)
-// finale

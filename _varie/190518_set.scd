@@ -5,6 +5,13 @@
 // orchstral hit
 
 
+//start proxyspace
+p=ProxySpace.push(s);
+p.makeTempoClock;
+p.clock = TempoClock.default;
+p.clear
+
+
 "./mySetup/mySetup.scd".loadRelative;
 
 p.clock.tempo_(120/60)
@@ -19,7 +26,7 @@ d.keys
 ~sn.play;
 )
 
-~hh = Pbind(\instrument, \bplay, \buf, d["ch"][0], \dur, Pseq([0.5, Pseq([1],inf)],inf), \amp,0.4,);
+~hh = Pbind(\instrument, \bplay, \buf, d["ch"][0], \dur, Pseq([0.5, Pseq([1],inf)],inf), \amp,0.4);
 ~hh.play;
 
 
@@ -85,10 +92,6 @@ d.keys
 ~numbers.clear;
 ~numbers[1] = \filter -> {|in| in * Pulse.ar(2)}
 ~numbers.set(\wet1, 1)
-
-
-
-
 
 
 ~numbers.stop; ~numbers.stop(4); ~hey.stop(4);

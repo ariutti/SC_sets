@@ -324,23 +324,24 @@ SynthDef(\delay1, {
 
 (
 SynthDef(\tapedly, {
-	|in=0, out=0,fb=0.6, fc=5000, dlytime=0.125, wet=0.5, pan=0.0|
+	|in=0, out=0, fb=0.6, lpf=5000, delaytime=0.125, wet=0.5, pan=0.0|
 	var local, sig, delayed, phi, phR, phP, freq;
 	var tdbh; // time delay between heads (seconds)
 	local = LocalBuf(SampleRate.ir * 3, 1);
 	local.clear; // clear the buffer
 
-	tdbh = 0.125;
+	tdbh = 0.0125;
+	//tdbh = 0.125;
 	phi = (2 * tdbh) / BufDur.ir(local);
 	freq = 1.0 / BufDur.ir(local); // frequency to playback the buffer at rate 1
-	freq = (freq * tdbh) / VarLag.kr(dlytime, 2, warp:\linear);
+	freq = (freq * tdbh) / VarLag.kr(delaytime, 2, warp:\linear);
 	phR = LFSaw.ar( freq, phi, 0.5, 0.5)*BufFrames.kr( local );
 	phP = LFSaw.ar( freq, 0.0, 0.5, 0.5)*BufFrames.kr( local );
 
 	sig = Mix.ar(In.ar(in,2));
 	delayed = BufRd.ar(1, local, phP, loop:1);
 	delayed = delayed.tanh;
-	BufWr.ar( LPF.ar( (sig + delayed), fc, mul:fb), local, phR, loop:1);
+	BufWr.ar( LPF.ar( (sig + delayed), lpf, mul:fb), local, phR, loop:1);
 	pan = LFNoise1.ar(5);
 	Out.ar(out, Pan2.ar(delayed*wet, pan));
 }).add;
@@ -657,9 +658,9 @@ SynthDef(\pluck, {
 	var exc, sig, env;
 	exc = WhiteNoise.ar() * EnvGen.ar(Env.perc(atk, rel));
 	sig = Pluck.ar(exc, 1, 0.2,freq.reciprocal,dcy,coef:coef.clip(-1.0, 1.0));
-	DetectSilence.ar(sig, 0.0001, 0.01, doneAction:2);
 	sig = (sig * dist).clip(-1.0, 1.0) * amp;
 	sig = LeakDC.ar(sig);
+	DetectSilence.ar(sig, 0.0001, 0.01, doneAction:2);
 	Out.ar(out, Pan2.ar(sig,pan));
 }).add
 );

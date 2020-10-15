@@ -235,6 +235,6 @@ LFPulse.ar(1, width:0.1)*Line.kr(1,1,5, doneAction:2)
 // ultimo
 {SinOsc.ar(1000, mul:amp)*Line.ar(1, 1, 0.1, doneAction:2)}.play ;
 }.fork
-
+)
 
 Synth.basicNew('',s,91636).free

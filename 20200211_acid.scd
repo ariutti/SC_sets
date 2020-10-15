@@ -1,3 +1,6 @@
+t = TempoClock.default;
+t.tempo_(60/60);
+
 (
 SynthDef(\organ, {
 	|amp=1.0, freq=440,atk=0.1, rel=1,pan=0.0,nh=2,dist=1|

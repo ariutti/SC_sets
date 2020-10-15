@@ -2,6 +2,8 @@
 // used for the piece "Talk to me baby"
 
 p = ProxySpace.push(s.boot);
+p.clock.tempo = 75/60
+p.clear
 
 s.meter;
 (
