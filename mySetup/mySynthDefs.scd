@@ -1805,8 +1805,8 @@ RING1
 ARGS:
 
 freq =
-d    = Ringz decay time
-a    = Ringz amplitude
+d (rel)  = Ringz decay time
+a (dist) = Ringz amplitude
 pan  =
 amp  =
 out  =
@@ -1880,7 +1880,7 @@ SynthDef(\ring1,{
 	|
 	var sig, env;
 	env = EnvGen.ar(Env.perc(atk, rel), doneAction:2);
-	sig = Ringz.ar( Impulse.ar(0) ,freq,rel, dist).tanh;
+	sig = Ringz.ar( Impulse.ar(0) ,freq, rel, dist).tanh;
 	sig = sig * amp * env;
 	Out.ar(out,Pan2.ar(sig,pan));
 	}, metadata: (

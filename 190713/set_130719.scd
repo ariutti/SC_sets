@@ -1,4 +1,4 @@
-p = ProxySpace.push(s.boot);
+p = ProxySpace.push();
 p.makeTempoClock
 p.clock.tempo_(2)
 s.plotTree
@@ -8,6 +8,7 @@ s.freqscope
 
 ~fond = {0};
 p.clear(4)
+p.stop
 
 
 (
@@ -40,8 +41,8 @@ p.clear(4)
 (
 ~stabs = Pbind(
 	\instrument, \ring1,
-	\a, 9, //Pseries(1, 1, inf).fold(1, 9),
-	\d, 0.3,
+	\dist, 9, //Pseries(1, 1, inf).fold(1, 9),
+	\rel, 0.3,
 	\amp, 0.3,
 	\degree, Pkr(~fond)
 	       + Pwrand(#[[0, -3, -5], [0, -2, -4], [0, -2, -5], [0, -1, -4]], [1, 0.5, 0.4, 0.3].normalizeSum, inf),
