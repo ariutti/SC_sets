@@ -1870,6 +1870,23 @@ Pbindef(\bass,
 ).quant_(4).play;
 )
 
+//80s style
+(
+Pbindef(\bass,
+	\instrument, \ring1,
+	\octave, [3,4], //Pseq([3,4,5,6], inf),
+	\scale, Scale.minor,
+	\dist, 50, //Pwhite(2,5,inf),
+	\degree, Pseq([-1, 0, 0, -1, 0], inf),
+	\amp, 0.5,
+	\atk, 0.001,
+	\rel, 0.25,
+	\root, 2,
+	\dur, Pseq([Pseq([0.125, 0.375], 1), 0.25], inf),
+	\pan, 0
+).quant_([4,0]).play;
+)
+
 */
 
 (
@@ -2083,4 +2100,23 @@ Pbindef(\noise_raising).stop;
 
 
 // temp
-Pbindef(\noise_raising).play;
+//Pbindef(\noise_raising).play;
+
+
+// use the FREEZER like this
+// ~freezer = Synth(\freezer,target: RootNode(Server.default), addAction: \addToTail);
+// ~freezer.free;
+(
+SynthDef(\freezer, {
+	|in=0, out=0, freeze=0, bufSize=2048|
+
+	var sig = In.ar( in, 2 );
+	var chain;
+	chain = FFT( LocalBuf((bufSize).dup(2), 1), sig);
+    chain = PV_Freeze(chain, freeze );
+	sig = IFFT(chain);
+	ReplaceOut.ar(out, sig) ;
+}).add;
+)
+
+

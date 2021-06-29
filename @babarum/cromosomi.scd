@@ -203,26 +203,6 @@ Pbindef(\loop,	\start, 0.1875,\dur, 0.5); // Eb
 
 
 
-Pbindef(\loop, \amp, 0.7);
-Pbindef(\loop).stop;
-(
-Pbindef(\loop,
-	\start, Pseq((0..7)/16,inf),
-	\dur, 1,
-	\amp, 0.8
-);
-)
-
-
-// Db repeated, then fallback
-/*(
-Pbindef(\loop,
-	\start, Pstutter(Pseq([8,1],inf), Pseq([0.0, 0.125], inf)), //Pseq((0..7)/16,inf),
-	\amp, Pseq([Pn(0.7,8), 0.8], inf),
-	\dur, Pseq([Pn(0.5,8), Pn(4,1)], inf)
-);
-)*/
-
 
 // Here's my boy: Db | Fm | Eb
 (
@@ -233,17 +213,6 @@ Pbindef(\loop,
 );
 )
 
-
-// Db repeated, Fm repeated
-(
-Pbindef(\loop,
-	\start, Pstutter(16, Pseq([0.0, 0.125], inf)), //Pseq((0..7)/16,inf),
-	\amp, Pstutter(16, Pseq([1, 0.7], inf)),
-	\dur, 0.5
-);
-)
-
-Pbindef(\loop, \start, Prand([0.0, 0.0, 0.125,0.0625], inf),\dur, 0.25); // Db
 
 
 // finale !!!!
@@ -303,57 +272,6 @@ Pbindef(\pads,
 
 Pbindef(\pads).stop;
 Pbindef(\pads).clear;
-
-
-// (
-// Pbindef(\pads,
-// 	\instrument, \sinfb,
-// 	\scale, Scale.minor,
-// 	\root,5,
-// 	\mtranspose, Pwhite(-0.01, 0.01, inf).clump(5),
-// 	\octave, 5, //Prand([3,4,5],inf).clump(5),
-// 	\degree, Pseq([
-// 		[-3,-1, 0,2,4], // Fm
-// 		//[ -1,1,3 ], // Eb maj
-// 		[ -2,0,2, 3, 4 ] // Db
-// 		//[-2,2,6, 7,11,15 ]
-// 	], inf),
-// 	\pan, Pwhite(-1.0, 1.0 ,inf).clump(5),
-// 	\amp, Pgauss(0.1, 0.01, inf).clump(5) * 0.6,
-// 	\fb, Pwhite(0.2,0.6,inf).clump(6),
-// 	\atk, 2,
-// 	\rel, 8,
-// 	\dur, 7,
-// 	\addAction,0
-// ).quant_(4).play;
-// )
-
-
-// wavetable pads
-
-/*(
-Pbindef(\pads,
-	\instrument, \wtplay,
-	\root, 5,
-	\scale, Scale.minor,
-	\octave, Prand([5], inf).clump(5),
-	\degree, Pseq([
-		[-3,-1, 0,2,4], // Fm
-		//[ -1,1,3,10,3 ], // Eb maj
-		//[ -2,0,2, 3, 4 ] // Db
-		//[-2,2,6, 7,11,15 ]
-	], inf),
-	\mtranspose, Pwhite(-0.001, 0.001, inf).clump(5),
-	\atk, 4,
-	\rls, 6,
-	\wt, b,
-	\out, 0,
-	\pan, Pwhite(-1.0, 1.0, inf).clump(5),
-	\amp, Pgauss(0.1, 0.01, inf).clump(5) * 0.3,
-	\dur, Pseq([8], inf), //Pbjorklund2(Pwhite(3,9).asStream.round(1),16,inf, Pwhite(0,15).asStream.round(1))/16
-	\addAction, 0
-).quant_([4,0]).play
-)*/
 
 
 

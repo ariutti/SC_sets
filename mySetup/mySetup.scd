@@ -1,5 +1,9 @@
 //Boilerplate code for basic live coding functionality
 
+	// 1. uninstall ddwSnippet quark --> re-compile class library
+	// 2. instal ddwSnippets quark --> re-compile class library
+	// 3. evaluate the code
+
 (
 //increase number of buffers the server has access to for loading samples
 s.options.numBuffers = 1024 * 32;
@@ -149,6 +153,8 @@ s.waitForBoot({
 	// load snippets
 	"loading snippets".postln;
 	("mySnippets.scd").loadRelative;
+	// shortcut CTRL + ALT + ?
+
 
 	//wait, because otherwise it won't work for some reason
 	3.wait;

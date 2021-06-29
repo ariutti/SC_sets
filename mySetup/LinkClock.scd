@@ -2,7 +2,7 @@ TempoClock.default = LinkClock(120/60).latency_(Server.default.latency);
 t = TempoClock.default;
 
 // test the LinkClock
-TempoClock.default.tempo_(136/60)
+t.tempo_(136/60)
 t.tempo_(129/60)
 
 

@@ -213,7 +213,11 @@ Tdef(\chordChanger, {
 	loop{
 		Pbindef(\bev, \pos, pos.next);
 		~tonica = tonica.next;
-		("tonica = " ++ ~tonica).postln;
+		switch( ~tonica,
+			( 0), {"Cm".postln;},
+			(-2), {"Ab".postln;},
+			(-1), {"Bb".postln;},
+		);
 		wait(4);
 	};
 }).quant_([4,0,0.1]);
@@ -350,44 +354,6 @@ SynthDef(\squarebass, {
 );
 
 
-(
-Pbindef(\bass,
-	\instrument, \squarebass,
-	//\dist, 20, //Pwhite(2,5,inf),
-	\scale, Scale.minor,
-	\root, 0,
-	\amp, 0.8,
-	\atk, 0.0,
-	\rel, 0.125,
-	\width, 0.4,
-	\scale, Scale.minor,
-	\octave, Prand([3,4], inf),
-	\degree, Pfunc({~tonica}) + Pwrand([-1, 0,7],[4,1,0.5].normalizeSum, inf), //Pn(Pstutter(2, Pseq([0,2,4], 1))++Pseq([0,4], 1),inf),
-	\dur, Pwrand([0.25, 0.5],[4,1].normalizeSum, inf),
-	\pan, 0,
-	\addAction, 1
-).quant_(4).play;
-)
-
-
-(
-Pbindef(\bass,
-	\instrument, \ring1,
-	\scale, Scale.minor,
-	\root, 0,
-	\octave, [3,4], //Prand([3,4], inf),
-	\degree, Pfunc({~tonica}) + Pwrand([\,-1, 0,7],[2,4,1,0.5].normalizeSum, inf), //Pn(Pstutter(2, Pseq([0,2,4], 1))++Pseq([0,4], 1),inf),
-	\dist, 100, //Pwhite(2,5,inf),
-	\amp, 0.6,
-	\atk, 0.01,
-	\rel, 0.125,
-	\dur, Pwrand([0.25, 0.5],[4,1].normalizeSum, inf),
-	\pan, 0,
-	\addAction, 1
-).quant_([4,0.5]).stop.play;
-)
-
-
 // this is my boy!!!
 (
 Pbindef(\bass,
@@ -410,28 +376,6 @@ Pbindef(\bass,
 ).quant_([4,0]).stop.play;
 )
 Pbindef(\bass).clear
-
-/*
-(
-Pbindef(\bass,
-	\instrument, \acid,
-	//\dist, 20, //Pwhite(2,5,inf),
-	\amp, 0.7,
-	\atk, 0.0,
-	\rel, 0.1,
-	\width, 0.4,
-	\scale, Scale.minor,
-	\octave, Prand([3,4], inf),
-	\degree, Pfunc({~tonica}) + Pwrand([\,-1, 0,7],[2,2,4,0.5].normalizeSum, inf), //Pn(Pstutter(2, Pseq([0,2,4], 1))++Pseq([0,4], 1),inf),
-	\dur, Pwrand([0.25, 0.5],[4,1].normalizeSum, inf),
-	\rf, Pfunc({~bass_freq}), //3000,
-	\rq, Pfunc({~bass_rq}), //0.1,
-	\fatk, 0.01, \fdcy, 0.05, \fsus, 0.7, \frel, 0.5,\famp, 1,
-	\pan, 0,
-	\addAction, 1
-).quant_([4,0]).stop.play;
-)
-*/
 
 
 // DRUMS //////////////////////////////////////////////////////////////////////////////////////////////
@@ -494,16 +438,16 @@ Pbindef(\lead,
 	\scale, Scale.minor,
 	\degree, Pseq([4,2,0,4,3,4,6,4,4,3], inf),
 	\dur, Pseq([3,0.75,3.75, 0.25, 0.25], inf),
-	\dist, 3,
-	\width, 0.3,
+	\dist, 4,
+	\width, 0.01,
 	\atk, 0.01,
 	\rel, 0.1,
 	\amp, 0.9,
-	\pan, Pwhite(-1.0, 1.0, inf),
+	\pan, Pwhite(-0.8, 0.8, inf),
 	\addAction,0
 ).quant_([4,0]).stop.play;
 )
-Pbindef(\lead, \dist, 4, \rel, 0.25, \width, 0.01)
+Pbindef(\lead, \dist, 4, \rel, 0.25, \width, 0.01);
 Pbindef(\lead).stop;
 (
 Pbindef(\lead,
