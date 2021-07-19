@@ -1,9 +1,11 @@
 TempoClock.default = LinkClock(120/60).latency_(Server.default.latency);
 t = TempoClock.default;
+t.free
 
 // test the LinkClock
 t.tempo_(136/60)
-t.tempo_(129/60)
+t.tempo_(120/60)
+t.tempo_(60/60)
 
 
 (
@@ -37,6 +39,10 @@ task = Routine {
         {
             barsBox.value = bars;
             beatsBox.value = beats+1;
+			switch( beatsBox.value.asInteger,
+				1, { beatsBox.background_(Color.red()) },
+				{ beatsBox.background_(Color.green()) },
+			);
         }.defer(t.latency);
         1.0.wait;
     }

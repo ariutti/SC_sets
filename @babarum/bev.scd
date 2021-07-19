@@ -223,8 +223,39 @@ Tdef(\chordChanger, {
 }).quant_([4,0,0.1]);
 )
 
+
+(
+SynthDef(\varsaw, {
+	|freq=400,atk=0.1,rel=0.1,amp=1.0,pan=0.0,width=0.5, dist=1.0|
+	var env = EnvGen.ar(Env.perc(atk,rel),doneAction:2);
+	var sig = VarSaw.ar(freq, width:width, mul:dist).tanh;
+	sig = sig * env * amp;
+	Out.ar(0, Pan2.ar(sig, pan));
+}).add;
+)
+
 (
 Tdef(\chordChanger).play;
+
+// plain chords
+Pbindef(\chords,
+	\instrument, \varsaw,
+	\scale, Scale.minor,
+	\octave, Prand([5,6], inf).clump(3),
+	\root, 0,
+	\degree, Pfunc({~tonica}) + Pseq([[0,2,4]], inf), //Pseq([[0,2,4], [-2,0,2], [-1,1,2],[0,2,4]],inf), // Cm, Abmaj, Bb, Cm
+	\mtranspose, Pwhite(0.0, 0.001, inf).clump(3),
+	\width, 0.3,
+	\dist, 1,
+	\amp, 0.1,
+	\atk, 1,
+	\rel, 7,
+	\dur, 4,
+	\pan, Pwhite(-1.0, 1.0, inf).clump(3),
+	\addAction, 0,
+	\strum, 0.001
+).quant_([4,0]).play;
+
 Pbindef(\k,\instrument,\bplaym,\buf,~dirt["909"][0],\dur,4,\amp,2,\rel,0.5,\rate,0.9,\addAction,1).quant_([4,0]).stop.play;
 )
 
@@ -245,37 +276,7 @@ SynthDef(\organ, {
 }).add;
 )*/
 
-(
-SynthDef(\varsaw, {
-	|freq=400,atk=0.1,rel=0.1,amp=1.0,pan=0.0,width=0.5, dist=1.0|
-	var env = EnvGen.ar(Env.perc(atk,rel),doneAction:2);
-	var sig = VarSaw.ar(freq, width:width, mul:dist).tanh;
-	sig = sig * env * amp;
-	Out.ar(0, Pan2.ar(sig, pan));
-}).add;
-)
 
-
-// plain chords
-(
-Pbindef(\chords,
-	\instrument, \varsaw,
-	\scale, Scale.minor,
-	\octave, Prand([5,6], inf).clump(3),
-	\root, 0,
-	\degree, Pfunc({~tonica}) + Pseq([[0,2,4]], inf), //Pseq([[0,2,4], [-2,0,2], [-1,1,2],[0,2,4]],inf), // Cm, Abmaj, Bb, Cm
-	\mtranspose, Pwhite(0.0, 0.001, inf).clump(3),
-	\width, 0.3,
-	\dist, 1,
-	\amp, 0.1,
-	\atk, 1,
-	\rel, 7,
-	\dur, 4,
-	\pan, Pwhite(-1.0, 1.0, inf).clump(3),
-	\addAction, 0,
-	\strum, 0.001
-).quant_([4,0]).play;
-)
 Pbindef(\chords).play;
 Pbindef(\chords).stop;
 
@@ -355,16 +356,17 @@ SynthDef(\squarebass, {
 
 
 // this is my boy!!!
+// WARNING: evaluate it on time
 (
 Pbindef(\bass,
 	\instrument, \acid,
 	//\dist, 20, //Pwhite(2,5,inf),
-	\amp, 0.7,
+	\amp, 0.3,
 	\atk, 0.0,
 	\rel, 0.1,
 	\width, 0.4,
 	\scale, Scale.minor,
-	\root, 0,
+	\root, Pfunc({~root}),
 	\octave, Prand([3,4], inf),
 	\degree, Pfunc({~tonica}) + Pwrand([\,-1, 0,7],[2,2,4,0.5].normalizeSum, inf), //Pn(Pstutter(2, Pseq([0,2,4], 1))++Pseq([0,4], 1),inf),
 	\dur, Pwrand([0.25, 0.5],[4,1].normalizeSum, inf),
@@ -379,6 +381,7 @@ Pbindef(\bass).clear
 
 
 // DRUMS //////////////////////////////////////////////////////////////////////////////////////////////
+// warm up
 (
 Pbindef(\sk,\instrument,\bplaym,\buf,~dirt["909"][0],\dur,8,\amp,4,\rel,8,\rate,1,\addAction,1).quant_([4,0]).stop.play;
 Pbindef(\k,\instrument,\bplaym,\buf,~dirt["909"][0],\dur,4,\amp,2,\rel,0.5,\rate,0.9,\addAction,1).quant_([4,0]).stop.play;
@@ -696,25 +699,13 @@ MIDIIn.connectAll;
 ~padB8.free;
 ~padB8 = MIDIFunc.cc({
 	arg ...args;
-	args.postln;
-
-	if( args[0] > 0, {
-		"pad B8 pressed".postln;
-
-	}, {
-		"pad B8 released".postln;
-
-	});
+	"WARNING: stop all".postln;
+	Pbindef.all.do({ |item| item.stop; });
 },35);
-)
-
-
-
 
 
 
 // KONTROLS ////////////////////////////
-(
 ~k1.free;
 ~k1 = MIDIFunc.cc({
 	arg ...args;

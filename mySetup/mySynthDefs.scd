@@ -2098,6 +2098,7 @@ Pbindef(\noise_raising).stop;
 }).quant_([0]);
 );
 
+Tdef(\deactivate_shepard).play;
 
 // temp
 //Pbindef(\noise_raising).play;
@@ -2115,6 +2116,20 @@ SynthDef(\freezer, {
 	chain = FFT( LocalBuf((bufSize).dup(2), 1), sig);
     chain = PV_Freeze(chain, freeze );
 	sig = IFFT(chain);
+	ReplaceOut.ar(out, sig) ;
+}).add;
+);
+
+//~filter = Synth(\dejay_filter,target: RootNode(Server.default), addAction: \addToTail);
+//~filter.free;
+(
+SynthDef(\dejay_filter, {
+	|in=0, out=0, freq=120, rq=0.1|
+
+	var sig = In.ar( in, 2 );
+	sig = BPF.ar( sig, freq, rq);
+	//sig = BMoog.ar( sig,freq,rq, 2.9, 0.95 );
+	//sig = Normalizer.ar(sig);
 	ReplaceOut.ar(out, sig) ;
 }).add;
 )

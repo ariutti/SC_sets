@@ -1,5 +1,14 @@
 // SAKANOTO (a.k.a. Cromosomi)
 
+// @ 80 BPM loop chords will be
+// Db | Eb | Fm | Eb ||
+//piano_pt1_8bars_80bpm_stereo.wav
+
+// 0.0       0.125     0.25
+//| Db  Eb | Fm  Eb || Db  Eb | Fm  Eb |
+// 0.5
+//| Db  Eb | Fm  Eb || Db  Eb | Fm  Eb |
+
 t = TempoClock.default;
 t.tempo_(80/60)
 
@@ -18,15 +27,14 @@ Tdef(\changeTempoGradually).play;
 Tdef(\changeTempoGradually).stop;
 
 
-
-// @ 80 BPM loop chords will be
-// Db | Eb | Fm | Eb ||
-//piano_pt1_8bars_80bpm_stereo.wav
-
-// 0.0       0.125     0.25
-//| Db  Eb | Fm  Eb || Db  Eb | Fm  Eb |
-// 0.5
-//| Db  Eb | Fm  Eb || Db  Eb | Fm  Eb |
+// finale !!!!
+// REMEMBER: first make the pads fade away
+(
+~static_noise_1.free;
+Pbindef(\pads).stop;
+Pbindef(\loop,	\start, 0.0,\dur, Pseq([0.5], 1), \addAction, 0); // Db
+//Pbindef(\loop,	\start, 0.125,\dur, Pseq([0.5], 1), \addAction, 0); // Fm
+)
 
 
 // MIDI IN ///////////////////////////////////////////////
@@ -41,7 +49,6 @@ Pbindef.gui;
 //~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,1.0]);
 //~verb.set(\dec,0.6, \lpf,1500, \wet,1.0);
 
-Pbindef.gui;
 
 // NOISE FX ////////////////////////////////////////////////////////
 (
@@ -160,10 +167,6 @@ Pbindef(\loop,
 ).quant_(4);
 )
 
-
-Pbindef(\loop, \addAction,1)
-
-
 (
 Pbindef(\pads,
 	\degree, Pseq([
@@ -173,7 +176,7 @@ Pbindef(\pads,
 	], inf),
 ).quant_(4);
 
-Pbindef(\loop,	\start, 0.0,\dur, 0.5, \amp, 1); // Db
+Pbindef(\loop,\start, 0.0,\dur, 0.5, \amp, 1); // Db
 )
 
 (
@@ -213,16 +216,6 @@ Pbindef(\loop,
 );
 )
 
-
-
-// finale !!!!
-// REMEMBER: first make the pads fade away
-(
-~static_noise_1.free;
-Pbindef(\pads).stop;
-Pbindef(\loop,	\start, 0.0,\dur, Pseq([0.5], 1), \addAction, 0); // Db
-//Pbindef(\loop,	\start, 0.125,\dur, Pseq([0.5], 1), \addAction, 0); // Fm
-)
 
 // pads ////////////////////////////////////////////////////////////
 
@@ -622,7 +615,6 @@ Pbindef(\chirp).stop;
 
 
 // MIDI STUFF ////////////////////////////////////////////////////
-// PADS ////////////////////////////////////////
 (
 ~padA1.free;
 ~padA1 = MIDIFunc.cc({
@@ -848,15 +840,8 @@ Pbindef(\chirp).stop;
 
 	});
 },35);
-)
-
-
-
-
-
 
 // KONTROLS ////////////////////////////
-(
 ~k1.free;
 ~k1 = MIDIFunc.cc({
 	arg ...args;

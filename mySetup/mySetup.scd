@@ -38,7 +38,7 @@ s.waitForBoot({
 				if( sf.isFile && sf.extension.toLower == "wav", {
 					//("loading buffer: " ++ sf.fileName).postln;
 					Buffer.read(s,sf.fullPath);
-					//s.sync;
+					//s.sync;¿
 				});
 			});
 		)});
@@ -151,8 +151,8 @@ s.waitForBoot({
 	1.wait;
 
 	// load snippets
-	"loading snippets".postln;
-	("mySnippets.scd").loadRelative;
+	//"loading snippets".postln;
+	//("mySnippets.scd").loadRelative;
 	// shortcut CTRL + ALT + ?
 
 
@@ -175,6 +175,15 @@ s.waitForBoot({
 
 	//display tree
 	//s.plotTree;
+
+	// MIDI IN ///////////////////////////////////////////////
+	MIDIClient.init;
+	s.sync;
+	MIDIIn.connectAll;
+	s.sync;
+
+	s.volume_(0);
+
 
 	"Setup done!".postln;
 	"\nWARNING: remember to connect SC to OBS".postln;
