@@ -79,7 +79,7 @@ Pbindef(\bev,
 	\rel, 0.25,
 	\dur, 0.5,
 	\pos, Pseq([  0,  1,  2,  3,  4,  5,  6,  7]/8,inf),
-	\amp, Pseq([1.5,1.5,1.5,1.5,1.5,1.5,1.2,1.5],inf),
+	\amp, Pseq([1.5,1.5,1.5,1.5,1.5,1.5,0.5,1.5],inf),
 	\rate, Prand([1], inf),
 	\pan, 0.0,
 	\addAction, 1
@@ -97,7 +97,7 @@ Pbindef(\bev,
 	\rel, 0.25,
 	\dur, 0.5,
 	\pos, Pseq([  0,  3,  2,  0,  4,  7,  6,  7]/8,inf),
-	\amp, Pseq([1.5,1.5,1.5,1.5,1.5,1.5,0.9,1.5],inf),
+	\amp, Pseq([1.5,1.5,1.5,1.5,1.5,1.5,0.5,1.5],inf),
 	\rate, Prand([[1,1],[2,1]], inf),
 	\pan, 0.0,
 	\addAction, 1
@@ -375,7 +375,7 @@ Pbindef(\bass,
 	\fatk, 0.01, \fdcy, 0.05, \fsus, 0.7, \frel, 0.5,\famp, 1,
 	\pan, 0,
 	\addAction, 1
-).quant_([4,0]).stop.play;
+).quant_([4,0]);
 )
 Pbindef(\bass).clear
 

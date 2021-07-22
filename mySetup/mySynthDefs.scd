@@ -2036,7 +2036,7 @@ SynthDef(\combi1, {
 
 
 (
-~amp_shepards = 0.1;
+~amp_shepards = 0.4;
 );
 
 (
@@ -2089,6 +2089,7 @@ Tdef(\activate_shepard, {
 	).quant_(0).play;
 }).quant_(0);
 );
+//Tdef(\activate_shepard).play;
 // evaluate the code below to instantly kill all the shepards and the container grp
 (
 Tdef(\deactivate_shepard, {

@@ -123,14 +123,14 @@ Pbindef(\k,\dur, 4, \amp, 4);
 
 (
 ~clap = Buffer.read(s, "/home/nicola/Musica/samples/CC0/#99S002 Hands Make Sounds/Claps/clap-toilet-07.wav");
-Pbindef(\clap,\instrument,\bplay,\buf,~clap,\dur,2,\amp,[1,1] * 0.7,\rel,0.125,\rate,1.3 * Pgauss(1, 0.07, inf).clump(2),\addAction,1, \lag,Pwhite(0.0, 0.02, inf),\strum, Pwhite(0.0, 0.05, inf), \pan, [-1, 1]).quant_([4,3]).stop.play;
+Pbindef(\clap,\instrument,\bplay,\buf,~clap,\dur,2,\amp,[1,1] * 0.7,\rel,0.125,\rate,1.3 * Pgauss(1, 0.07, inf).clump(2),\addAction,1, \lag,Pwhite(0.0, 0.02, inf),\strum, Pwhite(0.0, 0.05, inf), \pan, [-1, 1]).quant_([4,3]);
 )
 
 Pbindef(\clap, \rate, 0.7, \rel, 0.1);
 
 (
 ~snap = Buffer.read(s,"/home/nicola/Musica/samples/CC0/#99S002 Hands Make Sounds/Snaps/snap-close-13.wav");
-Pbindef(\snap,\instrument,\bplay,\buf,~snap,\dur,2,\amp,1,\rel,0.125,\rate, Pgauss(1, 0.07, inf).clump(2),\addAction,1, \lag,Pwhite(0.0, 0.01, inf),\pan, [-1, 1], \strum, Pwhite(0.0, 0.02, inf)).quant_([4,1]).stop.play;
+Pbindef(\snap,\instrument,\bplay,\buf,~snap,\dur,2,\amp,1,\rel,0.125,\rate, Pgauss(1, 0.07, inf).clump(2),\addAction,1, \lag,Pwhite(0.0, 0.01, inf),\pan, [-1, 1], \strum, Pwhite(0.0, 0.02, inf)).quant_([4,1]);
 )
 Pbindef(\snap,\dur, 1);
 Pbindef(\clap).play;
@@ -156,6 +156,8 @@ Pbindef(\g1,
 	\addAction,0
 ).quant_(4).stop.play;
 )
+
+
 (
 Pbindef(\g2,
 	\instrument,\bplay,
@@ -167,6 +169,8 @@ Pbindef(\g2,
 	\pan, Pwhite(0.0, 1.0, inf)
 ).quant_(4).stop.play;
 )
+
+
 (
 Pbindef(\g3,
 	\instrument,\bplay,
@@ -185,6 +189,27 @@ Pbindef(\g1).stop;
 Pbindef(\g2).stop;
 Pbindef(\g3).stop;
 )
+
+
+/*
+(
+Pbindef(\aggressive_pads,
+	\instrument, \brinkmann1,
+	\scale, Pfunc({~scale}),
+	\octave, [4,7],
+	\root, Pfunc({~root}),
+	\degree, Pseq([\, 0, 2, 0],inf),
+	\mtranspose, Pfunc({~tonica}),
+	//\degree, Pseq([Pn(0,4), Pn(-1,4), Pn(-3,4), Pn(-2,8)],inf),
+	\atk, 0.01,
+	\rel, 0.1,
+	\dist, 60,
+	\amp, 0.4,
+	\dur, Pseq([1.5, 0.5, 0.5, 4+1.5], inf),
+	\addAction, 1
+).quant_([4]).stop.play;
+);
+*/
 
 
 
@@ -436,3 +461,4 @@ Pbindef(\g3).stop;
 	args.postln;
 },8);
 )
+

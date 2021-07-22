@@ -8,14 +8,17 @@ t.tempo_(136/60);
 // we used to talk
 
 
+// Fm | Eb | Ab | Db ||
+
+
 s.meter
 s.scope
 s.plotTree
 
-//~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,1.0]);
-//~verb.set(\dec,0.1, \lpf,1500, \wet,1.0);
+// fre the verb first
 ~verb.free;
 
+// then create a delay
 ~delay = Synth(\delay1, [\lpf, 5000, \delaytime, t.beatDur*0.26, \decaytime,2.0, \wet,1.0]);
 ~delay.set(\wet,0.0);
 ~delay.set(\wet,0.6);
@@ -78,6 +81,8 @@ Pbindef(\clap).stop;
 Pbindef(\snap).stop;
 )
 
+
+
 (
 Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pseq([1.25, 0.5,0.75,1.5],inf),\amp,2,\rel,0.125,\rate,0.6,\addAction,1, \lag,Pwhite(0.0, 0.02, inf)).quant_(4).play;
 
@@ -110,7 +115,7 @@ Pbindef(\hh,
 
 // more rythm please ( FoF )
 (
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,2,\rel,0.25,\rate,0.6,\addAction,1,\lag, 0.0).quant_(4).play;
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,8,\rel,0.125,\rate,0.6,\addAction,1,\lag, 0.0).quant_(4).play;
 Pbindef(\s,\instrument,\bplay,\buf,d["s"][0],\dur,2,\amp,0.7,\rel,0.1,\rate,0.7,\addAction,1,\lag, 0.0).quant_([4,1]).play;
 Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\amp,Pexprand(0.05,1)*1.5,\rate,2,\addAction,1, \lag, 0.0).quant_(4).play;
 )
@@ -152,7 +157,7 @@ Pbindef(\pads,
 	\fb, Pseq([0,0.25, 0.5, 1], inf), //Pwhite(0.1, 1.1, inf).clump(3),
 	\dur, 4, //Pseq([4,4,4,8], inf),
 	\atk, t.beatDur*1,  //Pkey(\dur)*0.5,
-	\rel, Pkey(\dur) * t.beatDur, //Pkey(\dur)*1.5,
+	\rel, Pkey(\dur)*2, //Pkey(\dur) * 1.5, //
 	\amp, 0.2,
 	\pan, Pwhite(-1.0, 1.0, inf).clump(3),
 	\addAction, 1
@@ -220,7 +225,7 @@ Pbindef(\bass,
 	\rel, 0.001 * t.beatDur,
 	\dist, 20,
 	\amp, 0.5,
-	\dur, Pseq([4], inf),
+	\dur, Pseq([4], inf), // also 2 is good
 	\addAction, 1
 ).quant_([4,3]).stop.play;
 );
@@ -355,6 +360,11 @@ Pbindef(\offbeats,
 ).quant_([4,0.5]).play;
 )
 Pbindef(\offbeats).stop;
+
+
+a = Synth.basicNew(\delay, nodeID:43046);
+a.free;
+
 
 
 // MIDI IN ////////////////////////////////////////////////////////////////////////////////////////////
@@ -572,14 +582,8 @@ MIDIIn.connectAll;
 	"WARNING: stop all".postln;
 	Pbindef.all.do({ |item| item.stop; });
 },35);
-)
-
-
-
-
 
 // KONTROLS ////////////////////////////
-(
 ~k1.free;
 ~k1 = MIDIFunc.cc({
 	arg ...args;

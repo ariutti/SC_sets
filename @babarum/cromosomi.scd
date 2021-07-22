@@ -9,8 +9,13 @@
 // 0.5
 //| Db  Eb | Fm  Eb || Db  Eb | Fm  Eb |
 
+
 t = TempoClock.default;
 t.tempo_(80/60)
+~delay.free;
+~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,1.0]);
+~verb.set(\dec,1, \lpf,5000, \wet,1.0);
+~verb.free;
 
 (
 Tdef(\changeTempoGradually, {

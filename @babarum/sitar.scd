@@ -13,6 +13,8 @@ Tdef(\chordChanger).stop;
 ~root = 2; // D
 )
 
+Pbindef.gui
+
 // MIDI IN ///////////////////////////////////////////////
 MIDIClient.init;
 MIDIIn.connectAll;
@@ -190,7 +192,7 @@ Pbindef(\speak).stop;
 Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,4,\amp,1,\rel,0.4,\rate,0.7,\addAction,0).quant_(4).play;
 
 
-// soft drums
+// soft drums (already playing)
 (
 Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,4,\amp,1,\rel,0.4,\rate,0.7,\addAction,0).quant_(4).play;
 Pbindef(\s,\instrument,\bplaym,\buf,d["sstick"][0],\dur,2,\amp,0.6,\rel,0.2,\rate,0.8,\addAction,Pwrand([0, 1], [1, 7].normalizeSum, inf) ).quant_([4,1]).stop.play;
@@ -209,9 +211,9 @@ Pbindef(\speak).stop;
 )
 
 
-// kick: four on the floor
+// kick: four on the floor @ 60 is too sloe
 (
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,1,\rel,0.4,\rate,0.7,\addAction,1).quant_(4).play;
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,3,\rel,0.4,\rate,0.7,\addAction,1).quant_(4).play;
 Pbindef(\s,\instrument,\bplaym,\buf,d["sstick"][0],\dur,2,\amp,0.6,\rel,0.2,\rate,0.8,\addAction,Pwrand([0, 1], [1, 7].normalizeSum, inf) ).quant_([4,1]).stop.play;
 Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,2,\rel, 0.05, \rate, 2,\amp, Pgauss(0.4,0.01, inf)).quant_([4, 0.5]).play;
 )

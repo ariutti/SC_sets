@@ -2,6 +2,13 @@
 
 TempoClock.default.tempo_(120/60);
 
+
+
+(
+~filter_lofreq = 300;
+~filter_hifreq = 18000;
+)
+
 // Dm
 
 
@@ -34,31 +41,30 @@ Pbindef(\loop, \loopbuf, d["loops"][0], \loopbars, 1, \loopbpm, 136);
 Pbindef(\loop, \sr, 4000, \bits, 5, \amp, 1); // decimator on
 Pbindef(\loop, \sr, 44100, \bits, 16, \amp, 1); // decimator off
 
-Pbindef(\loop, \hf,3000, \lf,300, \amp, 1.2); // filter on
+Pbindef(\loop, \hf, Pfunc({~filter_hifreq}), \lf, Pfunc({~filter_lofreq}), \amp, 1.2); // filter on
 Pbindef(\loop, \hf,20000,\lf,0, \amp, 1);  // filter off
 
-Pbindef(\loop, \sr, 44100, \bits, 16, \hf,20000,\lf,0, \amp, 1); // decimator & filter off
-
+// !!!!!
+Pbindef(\loop, \sr, 44100, \bits, 16, \hf,20000,\lf,0, \amp, 1,\start, 0.0, \dur, 4).reset.play; // normal, decimator & filter off
 
 (
 Pbindef(\loop, \pan, 0.0); // reset pan
-Pbindef(\loop, \sr, 44100, \bits, 16, \amp, 0.3); // decimator setup
-Pbindef(\loop, \start,0.0, \dur, 4, \amp, 0.3);Pbindef(\amen, \hf,20000, \lf,0);  // remove filter
+Pbindef(\loop, \sr, 44100, \bits, 16, \amp, 1); // decimator setup
+Pbindef(\loop, \start,0.0, \dur, 4, \amp, 1);
+Pbindef(\loop, \hf,20000, \lf,0);  // remove filter
 )
 
 
 Pbindef(\loop, \start,0.0, \dur, 0.5, \amp, 1); // kick
 Pbindef(\loop, \start,0.0, \dur, 1, \amp, 1); // kick & snare - grezzo
 Pbindef(\loop, \start,0.25, \dur, 1, \amp, Pseq([1,0],inf));
-Pbindef(\loop, \start,0.0, \dur, Pseq([0.5,1.5], inf), \amp, Pseq([1,0],inf)); // kick
-
 
 Pbindef(\loop, \start,0.25 * 0.125, \dur, 0.25, \amp, 1); // snare
 Pbindef(\loop, \start,Pseq([0.0, 0.0, 0.25*0.125],inf), \dur, 0.25); // k + sn
 Pbindef(\loop, \start, 0.75, \dur, 0.125*0.25, \amp, 0.25); // errrrrr
 Pbindef(\loop, \start, Pwhite(0.0, 0.75).round(0.25), \dur, 0.25*0.5); //pure random
 Pbindef(\loop, \start, Prand([0, 0.125, 0.25, 0.5, 0.625, 0.75] * 0.25, inf), \dur, Prand([0.25, 0.5], inf), \amp, 1) // break core
-Pbindef(\loop, \start, Prand([0, 0.125, 0.25, 0.5, 0.625, 0.75] * 0.25, inf), \dur, Prand([0.25, 0.5], inf), \amp, 1) // break core
+Pbindef(\loop).reset.play; //\start, Prand([0, 0.125, 0.25, 0.5, 0.625, 0.75] * 0.25, inf), \dur, Prand([0.25, 0.5], inf), \amp, 1) // break core
 
 
 
@@ -66,6 +72,9 @@ Pbindef(\loop, \start, Prand([0, 0.125, 0.25, 0.5, 0.625, 0.75] * 0.25, inf), \d
 Pbindef(\speakSpell,\instrument,\bplaym,\buf,Pindex(d["speakspell_letters"], Prand((0..d["speakspell_letters"].size),inf), inf),\dur,4,\amp,1,\addAction,1,\pan, Pwhite(-1.0, 1.0, inf)).quant_(4);
 Pbindef(\speakSpell).stop;
 Pbindef(\speakSpell).play;
+
+
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -205,7 +214,7 @@ Pbindef(\bells).play;
 Pbindef(\loop).play;
 )
 
-s.meter
+s.plotTree
 
 
 
@@ -241,7 +250,7 @@ Pbindef(\bass,\addAction, Pwrand([1,0],[10,1].normalizeSum, inf)).play;
 
 
 
-Pbindef(\speakSpell,\instrument,\bplaym,\buf,Pindex(d["speakspell_letters"], Prand((0..d["speakspell_letters"].size),inf), inf),\dur,4,\amp,0.5,\addAction,0,\pan, Pwhite(-1.0, 1.0, inf)).quant_(4);
+Pbindef(\speakSpell,\instrument,\bplaym,\buf,Pindex(d["speakspell_letters"], Prand((0..d["speakspell_letters"].size),inf), inf),\dur,4,\amp,1,\addAction,0,\pan, Pwhite(-1.0, 1.0, inf)).quant_([4,1]).stop.play;
 Pbindef(\speakSpell).stop;
 Pbindef(\speakSpell).play;
 
@@ -249,7 +258,7 @@ Pbindef(\speakSpell).play;
 
 
 Pbindef(\loop).play;
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,0.5,\amp,0.7,\rel,0.5,\rate,0.8,\addAction,1).quant_(4).play;
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,4,\amp,1,\rel,0.25,\rate,0.8,\addAction,1).quant_(4).play;
 Pbindef(\k).stop;
 
 Pbindef(\sn,\instrument,\bplay,\buf,d["s"][0],\dur,(Pn(0.5,1) ++ Pseq([1],inf))*0.7,\amp,Pn(\rest,1)++Pseq([0.4 * 1],inf),\addAction,1,\rel,0.1,\rate, 0.6).quant_(4).stop.play;
@@ -260,6 +269,7 @@ Pbindef(\bass,\rel, 1);
 Pbindef(\k).quant_(4).stop;
 Pbindef(\sn).quant_(4).stop;
 )
+
 
 (
 Pbindef(\k,\amp,1);
@@ -305,4 +315,299 @@ SynthDef(\ring1,{
 Pbindef(\speakSpell,\instrument,\bplaym,\buf,Pindex(d["speakspell_letters"], Pseq(~word, inf), inf),\dur,4,\amp,0.3,\addAction,0,\pan, Pwhite(-1.0, 1.0, inf),\rate,1).quant_(4);
 )
 
-"espeak -v en \"I love you\"".unixCmd;
+"espeak -v it \"benvenuti in questa bella serata\"".unixCmd;
+
+
+
+
+(
+~padA1.free;
+~padA1 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+	if( args[0] > 0, {
+		"pad A1 pressed - loop ON".postln;
+		Pbindef(\loop).play;
+	}, {
+		"pad A1 released - loop OFF".postln;
+		Pbindef(\loop).stop;
+
+	});
+},20);
+
+~padA2.free;
+~padA2 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+	if( args[0] > 0, {
+		"pad A2 pressed - decimator ON".postln;
+		Pbindef(\loop, \sr, 4000, \bits, 5, \amp, 1); // decimator on
+
+	}, {
+		"pad A2 released - decimator OFF".postln;
+		Pbindef(\loop, \sr, 44100, \bits, 16, \amp, 1); // decimator off
+
+	});
+},21);
+
+
+~padA3.free;
+~padA3 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+	if( args[0] > 0, {
+		"pad A3 pressed - filter ON".postln;
+		Pbindef(\loop, \hf,3000, \lf,300, \amp, 1.2); // filter on
+
+	}, {
+		"pad A3 released - filter OFF".postln;
+		Pbindef(\loop, \hf,20000,\lf,0, \amp, 1);  // filter off
+	});
+},22);
+
+~padA4.free;
+~padA4 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+	if( args[0] > 0, {
+		"pad A4 pressed - tabla ON".postln;
+		Pbindef(\tabla).play;
+	}, {
+		"pad A4 released - tabla OFF".postln;
+		Pbindef(\tabla).stop;
+	});
+},23);
+
+~padA5.free;
+~padA5 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+
+	if( args[0] > 0, {
+		"pad A5 pressed - bass ON".postln;
+		Pbindef(\bass).play;
+
+	}, {
+		"pad A5 released - bass OFF".postln;
+		Pbindef(\bass).stop;
+
+	});
+},24);
+
+
+~padA6.free;
+~padA6 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+	if( args[0] > 0, {
+		"pad A6 pressed - pads ON".postln;
+		Pbindef(\pads).play;
+	}, {
+		"pad A6 released - pads OFF".postln;
+		Pbindef(\pads).stop;
+	});
+},25);
+
+~padA7.free;
+~padA7 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+
+	if( args[0] > 0, {
+		"pad A7 pressed - sitar ON".postln;
+		Pbindef(\sitar).play;
+	}, {
+		"pad A7 released - sitar OFF".postln;
+
+		Pbindef(\sitar).stop;
+	});
+},26);
+
+~padA8.free;
+~padA8 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+
+	if( args[0] > 0, {
+		"pad A8 pressed - melody ON".postln;
+		Pbindef(\melody).play;
+
+	}, {
+		"pad A8 released - melody OFF".postln;
+		Pbindef(\melody).stop;
+	});
+},27);
+
+~padB1.free;
+~padB1 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+
+	if( args[0] > 0, {
+		"pad B1 pressed - yeah ON".postln;
+		Pbindef(\yeah).play;
+	}, {
+		"pad B1 released - yeah OFF".postln;
+		Pbindef(\yeah).stop;
+	});
+},28);
+
+~padB2.free;
+~padB2 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+	if( args[0] > 0, {
+		"pad B2 pressed - speak ON".postln;
+		Pbindef(\speak).play;
+
+	}, {
+		"pad B2 released - speak OFF".postln;
+		Pbindef(\speak).stop;
+	});
+},29);
+
+
+~padB3.free;
+~padB3 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+	if( args[0] > 0, {
+		"pad B3 pressed".postln;
+	}, {
+		"pad B3 released".postln;
+	});
+},30);
+
+~padB4.free;
+~padB4 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+	if( args[0] > 0, {
+		"pad B4 pressed".postln;
+
+
+	}, {
+		"pad B4 released".postln;
+
+	});
+},31);
+
+~padB5.free;
+~padB5 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+
+	if( args[0] > 0, {
+		"pad B5 pressed".postln;
+
+	}, {
+		"pad B5 released".postln;
+
+	});
+},32);
+
+
+~padB6.free;
+~padB6 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+
+	if( args[0] > 0, {
+		"pad B6 pressed".postln;
+
+	}, {
+		"pad B6 released".postln;
+
+	});
+},33);
+
+~padB7.free;
+~padB7 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+
+	if( args[0] > 0, {
+		"pad B7 pressed".postln;
+	}, {
+		"pad B7 released".postln;
+	});
+},34);
+
+~padB8.free;
+~padB8 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+
+	if( args[0] > 0, {
+		"pad B8 pressed".postln;
+
+	}, {
+		"pad B8 released".postln;
+
+	});
+},35);
+
+// KONTROLS ////////////////////////////
+~k1.free;
+~k1 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+	if( args[0] > 10, {
+		//s.mute;
+	}, {
+		//s.unmute;
+	});
+
+},1);
+
+~k2.free;
+~k2 = MIDIFunc.cc({
+	arg ...args;
+	//args.postln;
+	var verbwet = args[0].linlin(0, 127, 0.0, 1.0);
+	("verb wet " ++ verbwet.round(0.001)).postln;
+	~verb.set(\dec,2, \lpf,5000, \wet, verbwet);
+},2);
+
+~k3.free;
+~k3 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+},3);
+
+~k4.free;
+~k4 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+},4);
+
+~k5.free;
+~k5 = MIDIFunc.cc({
+	arg ...args;
+	~filter_hifreq = args[0].linlin(0, 127, 5000, 20000);
+	("hifreq " ++ ~filter_hifreq.round(0.001)).postln;
+	Pbindef(\loop, \hf, ~filter_hifreq, \lf,~filter_lofreq, \amp, 1.2); // filter on
+},5);
+
+~k6.free;
+~k6 = MIDIFunc.cc({
+	arg ...args;
+	~filter_lofreq = args[0].linlin(0, 127, 300, 4500);
+	("lofreq " ++ ~filter_lofreq.round(0.001)).postln;
+	Pbindef(\loop, \hf,~filter_hifreq, \lf,~filter_lofreq, \amp, 1.2); // filter on
+
+},6);
+
+~k7.free;
+~k7 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+
+},7);
+
+~k8.free;
+~k8 = MIDIFunc.cc({
+	arg ...args;
+	args.postln;
+},8);
+)
