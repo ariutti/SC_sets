@@ -10,7 +10,7 @@ Tdef(\chordChanger).stop;
 )
 Pbindef.gui
 
-
+s.plotTree
 // MIDI IN ///////////////////////////////////////////////
 MIDIClient.init;
 MIDIIn.connectAll;
@@ -25,11 +25,16 @@ MIDIIn.connectAll;
 Pbindef.gui;
 
 ~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,1.0]);
-~verb.set(\dec,1, \lpf,5000, \wet,1.0);
+~verb.set(\dec,1, \lpf,5000, \wet,0.2);
 ~verb.free;
 
 ~freezer = Synth(\freezer,target: RootNode(Server.default), addAction: \addToTail);
 ~freezer.free;
+
+(
+"espeak -v it \"cirene \"".unixCmd;
+Tdef(\deactivate_shepard).play;
+)
 
 (
 Pbindef(\stabs,
@@ -51,6 +56,8 @@ Pbindef(\stabs,
 Pbindef(\stabs).play;
 Pbindef(\stabs).stop;
 
+
+Pbindef(\s,\instrument,\bplay,\buf,d["s"][1],\dur,2,\amp,1,\rel,1,\rate,0.6,\addAction,1).quant_([4, 0.5]).stop;
 
 // walkin bass in off beat
 (
@@ -123,7 +130,7 @@ Pbindef(\k,\dur, 4, \amp, 4);
 
 (
 ~clap = Buffer.read(s, "/home/nicola/Musica/samples/CC0/#99S002 Hands Make Sounds/Claps/clap-toilet-07.wav");
-Pbindef(\clap,\instrument,\bplay,\buf,~clap,\dur,2,\amp,[1,1] * 0.7,\rel,0.125,\rate,1.3 * Pgauss(1, 0.07, inf).clump(2),\addAction,1, \lag,Pwhite(0.0, 0.02, inf),\strum, Pwhite(0.0, 0.05, inf), \pan, [-1, 1]).quant_([4,3]);
+Pbindef(\clap,\instrument,\bplay,\buf,~clap,\dur,2,\amp,[1,1] * 0.7,\rel,0.125,\rate,1.3 * Pgauss(1, 0.07, inf).clump(2),\addAction,1, \lag,Pwhite(0.0, 0.02, inf),\strum, Pwhite(0.0, 0.05, inf), \pan, [-1, 1]).quant_([4,2.75]).play;
 )
 
 Pbindef(\clap, \rate, 0.7, \rel, 0.1);

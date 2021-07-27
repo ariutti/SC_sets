@@ -261,7 +261,7 @@ Pbindef(\pads,
 		//[-2,2,6, 7,11,15 ]
 	], inf),
 	\pan, Pwhite(-1.0, 1.0 ,inf).clump(5),
-	\amp, Pgauss(0.1, 0.01, inf).clump(5) * 0.5,
+	\amp, Pgauss(0.1, 0.01, inf).clump(5) * 1,
 	\rq, Pwhite(2, 0.5, inf),
 	\dur, Pseq([8, 4,4], inf),
 	\addAction,0
@@ -448,7 +448,7 @@ SynthDef(\bplay_distm,
 }).add;
 );
 
-Pbindef(\s,\instrument,\bplay_dist,\buf,~dirt["tech"][12],\dur,Pseq([2.25, 1.75], inf),\rel,0.3,\rate,1.1,\dist,Prand([6,100],inf),\amp,0.3,\addAction,Pwrand([0,1],[1,7].normalizeSum,inf)).quant_([4,1]).play;
+Pbindef(\s,\instrument,\bplay_dist,\buf,~dirt["tech"][12],\dur,Pseq([2.25, 1.75], inf),\rel,0.3,\rate,1.1,\dist,Prand([6,100],inf),\amp,0.5,\addAction,Pwrand([0,1],[1,7].normalizeSum,inf)).quant_([4,1]).play;
 Pbindef(\s).stop;
 
 
@@ -519,6 +519,8 @@ SynthDef(\glicth1, {
 }).add;
 );
 
+
+
 (
 SynthDef(\glitch2, {
 	|amp=1.0,out=0, pan=0.0|
@@ -559,6 +561,7 @@ Pbindef(\glitchB,
 ).quant_(1);
 );
 
+Pbindef.gui;
 Pbindef(\glitchB).stop;
 Pbindef(\glitchB).play;
 

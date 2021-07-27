@@ -140,7 +140,7 @@ s.waitForBoot({
 		//~samples = ~loadfunc.(\piano,  "pianoteq", "pianoteq-p-", ~samples);
 		s.sync; // pianoteq samples
 	}).start;
-
+	//~samples = ~loadfunc.(\violins_1st_sus, "1st Violins", "1st-violins-sus-", ~samples); s.sync;
 
 	4.wait;
 
@@ -177,9 +177,9 @@ s.waitForBoot({
 	//s.plotTree;
 
 	// MIDI IN ///////////////////////////////////////////////
-	MIDIClient.init;
-	s.sync;
-	MIDIIn.connectAll;
+	//MIDIClient.init;
+	//s.sync;
+	//MIDIIn.connectAll;
 	s.sync;
 
 	s.volume_(0);

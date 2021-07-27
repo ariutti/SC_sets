@@ -24,11 +24,11 @@ Pbindef(\A,
 	\mtranspose, Pwhite(-0.01, 0.01, inf).clump(2),
 	\fb, Pwhite(0.1, 1, inf).clump(2),
 	\atk, 0.01,
-	\rel, 0.3,
+	\rel, 0.1,
 	\dur, 0.5,
-	\amp, Pgauss(0.2, 0.01, inf).clump(2),
+	\amp, 1.6 * Pgauss(0.2, 0.01, inf).clump(2),
 	\strum, 0,
-	\addAction, 0
+	\addAction, 1
 ).quant_([4]).play;
 )
 
@@ -43,8 +43,9 @@ Pbindef(\A,
 	\fb, Pwhite(0.1, 1, inf).clump(4),
 	\atk, 0.0,
 	\rel, 0.1,
-	\amp, Pgauss(0.1, 0.01, inf).clump(2),
+	\amp, 2 * Pgauss(0.1, 0.01, inf).clump(2),
 	\strum, 0.1,
+	\addAction, 1
 ).quant_([4]).play;
 )
 Pbindef(\A).play;
@@ -134,13 +135,13 @@ Pbindef(\k,
 	\instrument, \kickFm,
 	\freq, 50,
 	//amplitude envelope
-	\atk, 0.0, \rel, 0.5,
+	\atk, 0.0, \rel, 0.1,
 	// pitch modulation
 	\fenvamt, 10.0, \fatk, 0.1, \frel, 0.2,
 	// frequency modulation
 	\mf, 100, \mi, 100, \matk, 0.01, \mrel, 0.01,
 	\dist, 1.0,
-	\amp, 5,
+	\amp, 16,
 	\dur, 1,
 	\addAction,1
 ).quant_([4,0]).stop.play;
@@ -184,7 +185,7 @@ Pbindef(\s,
 	// frequency modulation
 	\nf, 3500,\rq, 0.3,\namp, 2,\natk, 0.0, \nrel, 0.2,
 	\dist, 3,
-	\amp, 0.5,
+	\amp, 2,
 	\dur, Pseq([2], inf),
 	\addAction,1
 ).quant_([4,1]).stop.play;
@@ -224,7 +225,7 @@ Pbindef(\clap, \instrument,\bplay,\buf,d["c"][0],\dur,Prand([4],inf),\amp,0.5,\r
 // VOICE of VINCENT PRICE ////////////////////////////////////////////////////
 ~vincent = Buffer.read(s, "/home/nicola/Scaricati/Telegram Desktop/vincent_price_MLgenerated_test1.wav");
 
-Pbindef(\vincent,\instrument,\bplaym,\buf,~vincent,\dur,Pseq([1],1),\amp,3,\rel,15,\rate,1,\addAction,0).quant_(1).play;
+Pbindef(\vincent,\instrument,\bplaym,\buf,~vincent,\dur,Pseq([1],1),\amp,5,\rel,15,\rate,1,\addAction,0).quant_(1).play;
 
 
 
@@ -247,7 +248,7 @@ Pbindef(\oua,
 	\degree, 6,
 	\dur, Pseq([8],1),
 	\l, 2,
-	\amp, 0.2,
+	\amp, 1,
 	\addAction, 0,
 	\pan, 0.0
 ).quant_([4,1]).stop.play;
@@ -270,6 +271,7 @@ Pbindef(\oua,
 ).quant_([4,1]).stop.play;
 )
 Pbindef(\oua).clear;
+Pbindef(\oua).stop;
 
 // STABS /////////////////////////////////////////////////////////////////////
 (
@@ -289,6 +291,7 @@ Pbindef(\stabs,
 	\addAction, 0
 ).quant_([4, 1.5]).stop.play;
 )
+Pbindef(\stabs).stop;
 Pbindef(\stabs).play;
 Pbindef(\stabs).clear;
 
@@ -526,15 +529,10 @@ MIDIIn.connectAll;
 
 	});
 },35);
-)
-
-
-
 
 
 
 // KONTROLS ////////////////////////////
-(
 ~k1.free;
 ~k1 = MIDIFunc.cc({
 	arg ...args;

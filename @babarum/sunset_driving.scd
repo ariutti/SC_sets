@@ -15,6 +15,8 @@ s.meter
 s.scope
 s.plotTree
 
+
+
 // fre the verb first
 ~verb.free;
 
@@ -65,7 +67,7 @@ Tdef(\chordChanger).stop;
 
 (
 ~clap = Buffer.read(s, "/home/nicola/Musica/samples/CC0/#99S002 Hands Make Sounds/Claps/clap-toilet-07.wav");
-Pbindef(\clap,\instrument,\bplay,\buf,~clap,\dur,2,\amp,[1,1] * 0.7,\rel,0.125,\rate,1.1 * Pgauss(1, 0.07, inf).clump(2),\addAction,1, \lag,Pwhite(0.0, 0.02, inf),\strum, Pwhite(0.0, 0.1, inf), \pan, [-1, 1]).quant_([4,1]).stop.play;
+Pbindef(\clap,\instrument,\bplay,\buf,~clap,\dur,2,\amp,[1,1] * 3,\rel,0.125,\rate,1.1 * Pgauss(1, 0.07, inf).clump(2),\addAction,1, \lag,Pwhite(0.0, 0.02, inf),\strum, Pwhite(0.0, 0.1, inf), \pan, [-1, 1]).quant_([4,1]).stop.play;
 )
 
 (
@@ -84,12 +86,12 @@ Pbindef(\snap).stop;
 
 
 (
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pseq([1.25, 0.5,0.75,1.5],inf),\amp,2,\rel,0.125,\rate,0.6,\addAction,1, \lag,Pwhite(0.0, 0.02, inf)).quant_(4).play;
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pseq([1.25, 0.5,0.75,1.5],inf) ,\amp,2,\rel,0.125,\rate,0.6,\addAction,1, \lag,Pwhite(0.0, 0.02, inf)).quant_(4).play;
 
 Pbindef(\s,
 	\instrument,\bplaym,
 	\buf,d["sstick"][0],
-	\dur,Pseq([0.5, 1.5,2],inf),
+	\dur,Pseq([0.5, 1.5,2],inf) ,
 	\amp, Pseq([0.5,1, 0.7], inf) *1,
 	\rel,0.6,
 	\rate,0.7,
@@ -100,7 +102,7 @@ Pbindef(\s,
 Pbindef(\hh,
 	\instrument,\bplay,
 	\buf,d["ch"][0],
-	\dur,  Pseq([0.5,0.5,0.25,0.5,0.25,0.25,0.75,   1], inf),
+	\dur,  Pseq([0.5,0.5,0.25,0.5,0.25,0.25,0.75,   1], inf)
 	\rate, Pseq([  1,  1,   1,0.5, 0.5,   1, 0.5,0.45],inf) * 1,
 	\amp, 1,
 	\rel, 0.02,
@@ -242,9 +244,9 @@ Pbindef(\bass,
 	\degree, Pfunc({~tonica}) + Pseq([0],inf),
 	//\degree, Pseq([Pn(0,4), Pn(-1,4), Pn(-3,4), Pn(-2,8)],inf),
 	\atk, 0.01,
-	\rel, 0.2,
+	\rel, 0.1,
 	\dist, 30,
-	\amp, 2,
+	\amp, 5,
 	\dur, Pseq([1], inf),
 	\addAction, 1
 ).quant_([4,0.5]).stop.play;
@@ -265,9 +267,9 @@ Pbindef(\lead,
 	\width, 0.5,
 	\dur, 0.25,
 	\rel, 0.125,
-	\amp, 0.5,
+	\amp, 1,
 	\pan, Pwhite(-0.8, 0.8, inf),
-	\addAction, 1,
+	\addAction, 0,
 ).quant_([4,0]).play;
 )
 Pbindef(\lead).stop;
@@ -331,11 +333,13 @@ Pbindef(\lead,
 	\dur, 0.25,
 	\atk, 0.0,
 	\rel, 1,
-	\amp, Pseq([1,0.5, 0.7, 0.7],inf) * 0.25,
+	\amp, Pseq([1,0.5, 0.7, 0.7],inf) * 0.7,
 	\addAction, Prand([0,1],inf),
 	\pan, Pseg([-1.0, 1.0, -1.0],[4,4],\lin,inf)
 ).quant_([4]).stop.play;
 )
+
+Pbindef(\lead).stop;
 
 Pbindef.gui;
 // OFFBEATS ////////////////////////////////////////////////////////////////////////////////
@@ -354,7 +358,7 @@ Pbindef(\offbeats,
 	\dur, Pwrand([1, Pn(0.5, 2)],[1,0.25].normalizeSum, inf),
 	\atk, 0.0,  //Pkey(\dur)*0.5,
 	\rel, Pseg([0.05, 0.4], [8],\exp, inf), //Pwhite(0.1,0.7,inf), //Pkey(\dur) * t.beatDur, //Pkey(\dur)*1.5,
-    \amp, Pgauss(0.4, 0.05,inf) * 0.7,
+    \amp, Pgauss(0.4, 0.05,inf) * 4,
 	\pan, Pwhite(-1.0, 1.0, inf).clump(3),
 	\addAction, 0
 ).quant_([4,0.5]).play;

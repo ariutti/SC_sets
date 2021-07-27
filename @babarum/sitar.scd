@@ -21,7 +21,7 @@ MIDIIn.connectAll;
 
 
 ~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,2.0]);
-~verb.set(\dec,0.1, \lpf,1500, \wet,2.0);
+~verb.set(\dec,0.1, \lpf,1500, \wet,2);
 s.meter
 
 // it seems to me that major sitar arpeggio are those with indexes:
@@ -31,7 +31,7 @@ Pbindef(\sitar,
 	\instrument,\bplaym,
 	\buf, Pindex( ~dirt["sitar"], Prand([1,2,4,6],inf), inf),
 	\dur, Prand([7,11,13],inf),
-	\amp, 0.5,
+	\amp, 1,
 	\rel, 15,
 	\rate, 1,
 	\addAction,0
@@ -49,7 +49,7 @@ Pbindef(\pads,
 	\degree, Pfunc({~tonica}) + Pseq([0,4],inf),
 	\mtranspose, Pwhite(-0.02, 0.02, inf),
 	\fb, 0.5,
-	\amp, 0.02,
+	\amp, 0.05,
 	\atk, 2,
 	\rel, 2,
 	\dur, 0.125,
@@ -148,7 +148,7 @@ Pbindef(\melody,
 ).quant_([4,0.5]).stop.play;
 )
 Pbindef(\melody).stop;
-
+Pbindef.gui;
 
 /// double (maybe later)
 (
@@ -210,6 +210,7 @@ Pbindef(\yeah).stop;
 Pbindef(\speak).stop;
 )
 
+Pbindef.gui;
 
 // kick: four on the floor @ 60 is too sloe
 (
@@ -229,10 +230,12 @@ Pbindef(\k,\instrument,\bplaym,\buf,d["k"][1],\dur,0.25,\amp,2,\rel,0.4,\rate,0.
 (
 // super kick
 Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Prand([0.5, Pn(2,0.25)],inf),\amp,8,\rel,0.03,\rate,0.7,\addAction,1).quant_(4).play;
-Pbindef(\s,\instrument,\bplaym,\buf,d["sstick"][2],\dur,1,\amp,1,\rel,0.05,\rate,0.7,\addAction,Pwrand([0, 1], [1, 7].normalizeSum, inf) ).quant_([4,0.5]).stop.play;
+Pbindef(\s,\instrument,\bplaym,\buf,d["sstick"][2],\dur,1,\amp,2,\rel,0.05,\rate,0.7,\addAction,Pwrand([0, 1], [1, 7].normalizeSum, inf) ).quant_([4,0.5]).stop.play;
 Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,1,\rel, 0.05, \rate, 2,\amp, Pgauss(0.4,0.01, inf)).quant_([4, 0.5]).play;
 )
 
+
+Pbindef.gui;
 
 // MELODY ///////////////////////////////////////////////////////////////////////////////////
 

@@ -1,8 +1,8 @@
 // triphop
 
 TempoClock.default.tempo_(120/60);
-
-
+tes
+testtestestset
 
 (
 ~filter_lofreq = 300;
@@ -21,6 +21,7 @@ Pbindef(\loop,
 	\loopbpm, 136,
 	\currentBpm, Pfunc({TempoClock.default.tempo}),
 	\atk, 0.0,
+
 	\rel, 0.1,
 	\amp, 1,
 	\start, 0.0,
@@ -45,7 +46,7 @@ Pbindef(\loop, \hf, Pfunc({~filter_hifreq}), \lf, Pfunc({~filter_lofreq}), \amp,
 Pbindef(\loop, \hf,20000,\lf,0, \amp, 1);  // filter off
 
 // !!!!!
-Pbindef(\loop, \sr, 44100, \bits, 16, \hf,20000,\lf,0, \amp, 1,\start, 0.0, \dur, 4).reset.play; // normal, decimator & filter off
+Pbindef(\loop, \sr, 44100, \bits, 16, \hf,20000,\lf,300, \amp, 1,\start, 0.0, \dur, 4).reset.play; // normal, decimator & filter off
 
 (
 Pbindef(\loop, \pan, 0.0); // reset pan
@@ -53,6 +54,7 @@ Pbindef(\loop, \sr, 44100, \bits, 16, \amp, 1); // decimator setup
 Pbindef(\loop, \start,0.0, \dur, 4, \amp, 1);
 Pbindef(\loop, \hf,20000, \lf,0);  // remove filter
 )
+
 
 
 Pbindef(\loop, \start,0.0, \dur, 0.5, \amp, 1); // kick
@@ -69,7 +71,7 @@ Pbindef(\loop).reset.play; //\start, Prand([0, 0.125, 0.25, 0.5, 0.625, 0.75] * 
 
 
 
-Pbindef(\speakSpell,\instrument,\bplaym,\buf,Pindex(d["speakspell_letters"], Prand((0..d["speakspell_letters"].size),inf), inf),\dur,4,\amp,1,\addAction,1,\pan, Pwhite(-1.0, 1.0, inf)).quant_(4);
+Pbindef(\speakSpell,\instrument,\bplaym,\buf,Pindex(d["speakspell_letters"], Prand((0..d["speakspell_letters"].size),inf), inf),\dur,4,\amp,1,\addAction,0,\pan, Pwhite(-1.0, 1.0, inf)).quant_(4);
 Pbindef(\speakSpell).stop;
 Pbindef(\speakSpell).play;
 

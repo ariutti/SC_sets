@@ -4,7 +4,7 @@ from pynput.keyboard import Key, Listener
 from pythonosc import udp_client, osc_message_builder
 
 IP = '192.168.1.10' # jib lapto
-PORT = 1234
+PORT = 15400
 client = udp_client.SimpleUDPClient(IP, PORT)
 # on address /keyboard set a prefix equal to the name of the coder
 
