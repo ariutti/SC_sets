@@ -32,7 +32,7 @@ Tdef(\changeTempoGradually).play;
 Tdef(\changeTempoGradually).stop;
 
 
-// finale !!!!
+// FINALE !!!!
 // REMEMBER: first make the pads fade away
 (
 ~static_noise_1.free;
@@ -135,8 +135,6 @@ Pbindef(\pads,
 		//[ -2,0,2, 3, 4 ] // Db
 	], inf),
 );
-
-
 // full piano loop | Db  Eb | Fm  Eb |
 Pbindef(\loop,
 	\instrument, \sliceplayer,
@@ -365,7 +363,7 @@ Pbindef(\k,
 	\octave, 3,
 	\degree, Pseq([-3],inf),
 	\dur, 4, //Pseq([0.75, 0.5, 0.25, 0.5, 0.25, 0.5, 0.5, 0.25, 0.5], inf),
-	\amp, 4 ,//Pseq([   1, 0.5,  0.7, 0.7,    1, 0.5, 0.7,  0.5, 0.6], inf) * 1,
+	\amp, 2,//Pseq([   1, 0.5,  0.7, 0.7,    1, 0.5, 0.7,  0.5, 0.6], inf) * 1,
 	\rel, 0.15, //Pseq([ 0.1,   1,    1,   1,    1,   1,   1,    1,   1], inf),
 	\dc, Pseq([0.1,0.25], inf), //Pseg([0.0, 0.25], [4],\lin, inf),
 	\atk, 0.0,

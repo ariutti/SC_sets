@@ -32,7 +32,7 @@ Pbindef.gui;
 ~freezer.free;
 
 (
-"espeak -v it \"cirene \"".unixCmd;
+"espeak -v it \"cirrene \"".unixCmd;
 Tdef(\deactivate_shepard).play;
 )
 

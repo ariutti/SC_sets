@@ -6,7 +6,7 @@ t.latency_(0.21)
 // test the LinkClock
 t.tempo_(136/60)
 t.tempo_(120/60)
-t.tempo_(60/60)
+t.tempo_(80/60)
 
 
 (

@@ -24,14 +24,15 @@ s.plotTree;
 
 ~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,2.0]);
 ~verb.set(\dec,0.1, \lpf,1500, \wet,2);
-s.meter
+s.meter;
+
 
 // it seems to me that major sitar arpeggio are those with indexes:
 // 1, 2, 4, 6
 (
 Pbindef(\sitar,
 	\instrument,\bplaym,
-	\buf, Pindex( ~dirt["sitar"], Prand([1,2,4,6],inf), inf),
+	\buf, Pseq([~dirt["sitar"][6]],1) ++ Pindex( ~dirt["sitar"], Prand([1,2,4,6],inf), inf),
 	\dur, Prand([7,11,13],inf),
 	\amp, 1,
 	\rel, 15,
@@ -92,8 +93,8 @@ Pbindef(\bass).stop
 Pbindef(\tabla,
 	\instrument,\bplay,
 	\buf, Pindex(~dirt["tabla"], Prand((0..~dirt["tabla"].size-1),inf), inf),
-	\dur, Prand([1,2,4], inf) * 4,
-	\amp, Pgauss(0.5, 0.1, inf),
+	\dur, Prand([1,2,4], inf),
+	\amp, Pgauss(0.5, 0.1, inf) * 2,
 	\rel,15,
 	\rate,1,
 	\addAction,1
@@ -105,10 +106,10 @@ Pbindef(\tabla).stop;
 Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,4,\amp,1,\rel,0.4,\rate,0.7,\addAction,0).quant_(4).play;
 
 
-Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,2,\rel, 0.05, \rate, 2,\amp, Pgauss(0.4,0.01, inf)).quant_([4, 0.5]).play;
+Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,2,\rel, 0.05, \rate, 2,\amp, Pgauss(0.9,0.1, inf)).quant_([4, 0.5]).play;
 
 
-Pbindef(\s,\instrument,\bplaym,\buf,d["sstick"][0],\dur,2,\amp,0.6,\rel,0.2,\rate,0.8,\addAction,Pwrand([0, 1], [1, 7].normalizeSum, inf) ).quant_([4,1]).stop.play;
+Pbindef(\s,\instrument,\bplaym,\buf,d["sstick"][0],\dur,2,\amp,0.8,\rel,0.2,\rate,0.8,\addAction,Pwrand([0, 1], [1, 7].normalizeSum, inf) ).quant_([4,1]).stop.play;
 
 
 //some sort of glithes

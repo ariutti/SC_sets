@@ -128,7 +128,7 @@ Pbindef(\bass,
 	\fb, 0.8,
 	\amp, 0.4,
 	\atk, 0.01,
-	\rel, 1,
+	\rel, 2,
 	\dur, 8, //Pbjorklund2(3,8,inf,0)/2,
 	\addAction, 0
 ).quant_([4]).play;
@@ -173,6 +173,7 @@ SynthDef(\squarebass, {
 	Out.ar(out, Pan2.ar(sig, pan));
 }).add;
 );
+*/
 
 
 (
@@ -216,8 +217,8 @@ Pbindef(\k, \amp, 1);
 Pbindef(\s1,
 	\instrument,\bplaym,
 	\buf,Pindex(~dirt["invaders"],[10],inf),
-	\dur,2,
-	\amp, 0.7,
+	\dur, 2,
+	\amp, 1,
 	\atk, 0.0,
 	\rel, 0.07,
 	\rate, 2.5,
@@ -229,7 +230,7 @@ Pbindef(\s2,
 	//\buf, Pindex(~dirt["invaders"], Prand((0..~dirt["invaders"].size-1), inf),inf),
 	\buf, Pindex(~dirt["invaders"], Pseq([10],inf),inf), //0,9
 	\dur, Prand([0.5, 1,2],inf),
-	\amp, 0.2,
+	\amp, 1,
 	\atk, 0.0,
 	\rel, 0.3,
 	\rate, (-2 + Prand([0,2,4], inf)).midiratio,
@@ -238,11 +239,11 @@ Pbindef(\s2,
 )
 
 // fof, some slight variation
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pwrand([1, Pn(0.5,2)],[6,1].normalizeSum,inf),\amp,0.2,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pwrand([1, Pn(0.5,2)],[6,1].normalizeSum,inf),\amp,1,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
 
 
 (
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pseq([3.5,0.25,0.25],inf),\amp,0.2,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pseq([3.5,0.25,0.25],inf),\amp,1,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
 Pbindef(\s1).stop;
 Pbindef(\s2).stop;
 )
@@ -266,8 +267,6 @@ Pbindef(\invaders).play;
 Pbindef(\alert).play;
 )
 
-
-{PlayBuf.ar(1,d["k"][0], doneAction:2)*4}.play;
 
 
 // ALTERNATE DRUMS
@@ -308,7 +307,7 @@ Pbindef(\invaders,
 	\instrument,\bplaym,
 	\buf, Pindex(~dirt["invaders"], Pseq([0,9,11,16],inf),inf), //0,9,11,16
 	\dur, Prand([5,7,13],inf),
-	\amp, Pgauss(0.125, 0.05, inf),
+	\amp, Pgauss(1.0, 0.05, inf),
 	\rel, 0.1,
 	\rate, (-2).midiratio,
 	\pan, Pseq([-1.0, 1.0], inf),
@@ -323,7 +322,7 @@ Pbindef(\alert,
 	//\buf, Pindex(~dirt["invaders"], Prand((0..~dirt["invaders"].size-1), inf),inf),
 	\buf, Pindex(~dirt["invaders"], Pseq([17],inf),inf), //0,9,11,16
 	\dur, 3 * Prand([0.5, 1,2],inf),
-	\amp, Pgauss(0.125, 0.05, inf),
+	\amp, Pgauss(1.0, 0.05, inf),
 	\atk, 0.0,
 	\rel, 0.5,
 	\rate, -0.11 + (-3 + Prand([0,11],inf)).midiratio,
@@ -379,11 +378,6 @@ Pbindef(\melodyC).stop;
 
 
 // MIDI CONTROLS /////////////////////////////////////////////////////
-
-
-
-
-
 // PADS ////////////////////////////////////////
 (
 ~padA1.free;
@@ -622,15 +616,8 @@ Pbindef(\melodyC).stop;
 
 	});
 },35);
-)
 
-
-
-
-
-
-// KONTROLS ////////////////////////////
-(
+// KONTROLS ///////////////////////////
 ~k1.free;
 ~k1 = MIDIFunc.cc({
 	arg ...args;

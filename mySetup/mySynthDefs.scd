@@ -304,11 +304,26 @@ SynthDef(\Gverb, {
 //~delay = Synth(\delay1, [\lpf, 500, \delaytime, t.beatDur*0.25, \decaytime,1.0, \wet,1.0]);
 (
 SynthDef(\delay1, {
-	arg in, out=0, delaytime=0.1, decaytime=1.0, wet=1.0, lpf=1500;
+	arg in, out=0, delaytime=0.1, decaytime=1.0, wet=1.0, cf=1500;
 	var sig;
 	sig = In.ar(in, 2);
 	//sig = In.ar(in, 2).sum;
-	sig = LPF.ar(sig, lpf);
+	sig = LPF.ar(sig, cf);
+	sig = CombL.ar(sig, 0.5, delaytime, decaytime);
+	sig = LeakDC.ar(sig);
+	//Out.ar(out, (sig*wet) + (in*(1.0-wet)));
+	Out.ar(out, (sig*wet));
+}).add;
+);
+
+
+(
+SynthDef(\delay_w_bpf, {
+	arg in, out=0, delaytime=0.1, decaytime=1.0, wet=1.0, cf=1500, rq=0.1;
+	var sig;
+	sig = In.ar(in, 2);
+	//sig = In.ar(in, 2).sum;
+	sig = BPF.ar(sig, cf, rq);
 	sig = CombL.ar(sig, 0.5, delaytime, decaytime);
 	sig = LeakDC.ar(sig);
 	//Out.ar(out, (sig*wet) + (in*(1.0-wet)));
@@ -1603,7 +1618,7 @@ SynthDef(\bplaym,
 	{arg out = 0, buf = 0, rate = 1, amp = 0.5, pan = 0, pos = 0, atk=0.0, rel=15;
 		var sig,env ;
 		sig = Pan2.ar(PlayBuf.ar(1,buf,BufRateScale.ir(buf)*rate,1,BufFrames.kr(buf)*pos,doneAction:2),pan);
-		env = EnvGen.ar(Env.linen(atk,rel,0.01),doneAction:2);
+		env = EnvGen.ar(Env.perc(atk,rel),doneAction:2);
 		sig = sig * env;
 		sig = sig * amp;
 		Out.ar(out,sig);
@@ -2126,10 +2141,10 @@ SynthDef(\freezer, {
 //~filter.free;
 (
 SynthDef(\dejay_filter, {
-	|in=0, out=0, freq=120, rq=0.1|
+	|in=0, out=0, cf=120, rq=0.1|
 
 	var sig = In.ar( in, 2 );
-	sig = BPF.ar( sig, freq, rq);
+	sig = BPF.ar( sig, cf, rq );
 	//sig = BMoog.ar( sig,freq,rq, 2.9, 0.95 );
 	//sig = Normalizer.ar(sig);
 	ReplaceOut.ar(out, sig) ;

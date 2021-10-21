@@ -1,3 +1,5 @@
+// guitar
+
 t = TempoClock.default
 t.tempo_(135/60)
 s.meter;

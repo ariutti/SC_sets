@@ -3,8 +3,7 @@
 
 
 TempoClock.default.tempo_(120/60);
-tes
-testtestestset
+
 
 (
 ~filter_lofreq = 300;
@@ -132,12 +131,13 @@ s.plotTree
 Pbindef(\loop).stop;
 Pbindef(\bells,
 	\instrument, \fm2,
-	\amp, Pseries(1, 1, inf).fold(1,9) / 30 * 0.0,
+	\amp, Pseries(1, 1, inf).fold(1,9) / 30 * 1.0,
 	\atk, 0.01,
 	\rel, 0.25, //Pwhite(1, 8, inf),
 	\mtranspose, Pwhite(-0.01, 0.01, inf).clump(3),
 	\scale, Scale.minor,
 	\octave, Pwrand([5,6], [5,0.2].normalizeSum, inf),
+	\root, 2,
 	\degree, 0 + [0,2,4], //Pseq([0,Prand([2,4,7],3)],inf).collect({|note| [note, note+[3,4].choose() ]}),
 	\dur, Pwrand([0.25], [10].normalizeSum,inf),
 	\pan, Pwhite(-1.0, 1.0, inf),
@@ -145,7 +145,7 @@ Pbindef(\bells,
 	\mi, 100,
 	\width, 0.01, //Pwhite(0.1, 0.5, inf),
 	\addAction, 0
-).quant_(1);
+).quant_(1).play;
 )
 (
 Pbindef(\speakSpell, \addAction, 1).stop

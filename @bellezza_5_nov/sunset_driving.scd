@@ -21,13 +21,14 @@ s.plotTree
 ~verb.free;
 
 // then create a delay
-~delay = Synth(\delay1, [\lpf, 5000, \delaytime, t.beatDur*0.26, \decaytime,2.0, \wet,1.0]);
+//~delay = Synth(\delay1, [\cf, 5000, \amp, 1.0, \delaytime, t.beatDur*0.26, \decaytime,2.0, \wet,1.0]);
+~delay = Synth(\delay_w_bpf, [\cf, 5000, \rq, 0.1, \delaytime, t.beatDur*0.26, \decaytime,2.0, \wet,1.0]);
 ~delay.set(\wet,0.0);
 ~delay.set(\wet,0.6);
 ~delay.free;
 
 (
-~filter_freq = 100;
+~filter_cf = 100;
 ~filter_rq = 0.1;
 )
 
@@ -67,12 +68,14 @@ Tdef(\chordChanger).stop;
 
 (
 ~clap = Buffer.read(s, "/home/nicola/Musica/samples/CC0/#99S002 Hands Make Sounds/Claps/clap-toilet-07.wav");
-Pbindef(\clap,\instrument,\bplay,\buf,~clap,\dur,2,\amp,[1,1] * 6,\rel,0.125,\rate,1.1 * Pgauss(1, 0.07, inf).clump(2),\addAction,1, \lag,Pwhite(0.0, 0.02, inf),\strum, Pwhite(0.0, 0.1, inf), \pan, [-1, 1]).quant_([4,1]).stop.play;
+
+Pbindef(\clap,\instrument,\bplay,\buf,~clap,\dur,2,\amp,[1,1] * 3,\rel,0.125,\rate,1.1 * Pgauss(1, 0.07, inf).clump(2),\addAction,1, \lag,Pwhite(0.0, 0.02, inf),\strum, Pwhite(0.0, 0.1, inf), \pan, [-1, 1]).quant_([4,1]).stop.play;
 )
 
 (
 ~snap = Buffer.read(s,"/home/nicola/Musica/samples/CC0/#99S002 Hands Make Sounds/Snaps/snap-close-13.wav");
-Pbindef(\snap,\instrument,\bplay,\buf,~snap,\dur,2,\amp,4,\rel,0.125,\rate, Pgauss(1, 0.07, inf).clump(2),\addAction,1, \lag,Pwhite(0.0, 0.02, inf),\pan, [-1, 1], \strum,Pwhite(0.0, 0.02, inf)).quant_([4,1]).stop.play;
+
+Pbindef(\snap,\instrument,\bplay,\buf,~snap,\dur,2,\amp,3,\rel,0.125,\rate, Pgauss(1, 0.07, inf).clump(2),\addAction,1, \lag,Pwhite(0.0, 0.02, inf),\pan, [-1, 1], \strum,Pwhite(0.0, 0.02, inf)).quant_([4,1]).stop.play;
 )
 
 Pbindef(\clap).play;
@@ -102,7 +105,7 @@ Pbindef(\s,
 Pbindef(\hh,
 	\instrument,\bplay,
 	\buf,d["ch"][0],
-	\dur,  Pseq([0.5,0.5,0.25,0.5,0.25,0.25,0.75,   1], inf)
+	\dur,  Pseq([0.5,0.5,0.25,0.5,0.25,0.25,0.75,   1], inf),
 	\rate, Pseq([  1,  1,   1,0.5, 0.5,   1, 0.5,0.45],inf) * 1,
 	\amp, 1,
 	\rel, 0.02,
@@ -110,7 +113,7 @@ Pbindef(\hh,
 	\addAction, 1
 ).quant_([4,0.5]).play;
 )
-
+s.meter
 
 
 Pbindef.gui
@@ -118,7 +121,7 @@ Pbindef.gui
 // more rythm please ( FoF )
 (
 Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,2,\rel,0.125,\rate,0.6,\addAction,1,\lag, 0.0).quant_(4).play;
-Pbindef(\s,\instrument,\bplay,\buf,d["s"][0],\dur,2,\amp,2,\rel,0.1,\rate,0.7,\addAction,1,\lag, 0.0).quant_([4,1]).play;
+Pbindef(\s,\instrument,\bplay,\buf,d["s"][3],\dur,2,\amp,2,\rel,0.05,\rate,0.8,\addAction,1,\lag, 0.0).quant_([4,1]).play;
 Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\amp,Pexprand(0.05,1)*1.5,\rate,2,\addAction,1, \lag, 0.0).quant_(4).play;
 )
 
@@ -159,10 +162,10 @@ Pbindef(\pads,
 	\fb, Pseq([0,0.25, 0.5, 1], inf), //Pwhite(0.1, 1.1, inf).clump(3),
 	\dur, 4, //Pseq([4,4,4,8], inf),
 	\atk, t.beatDur*1,  //Pkey(\dur)*0.5,
-	\rel, Pkey(\dur)*2, //Pkey(\dur) * 1.5, //
+	\rel, Pkey(\dur)*0.5, //Pkey(\dur) * 1.5, //
 	\amp, 0.2,
 	\pan, Pwhite(-1.0, 1.0, inf).clump(3),
-	\addAction, 1
+	\addAction, 0
 ).quant_([4,0]).stop.play;
 )
 Pbindef(\pads).stop;
@@ -192,7 +195,7 @@ Pbindef(\pads,
 	\rel, Pkey(\dur)*1.5,
 	\amp, 0.2,
 	\pan, Pwhite(-1.0, 1.0, inf).clump(3),
-	\addAction, 1
+	\addAction, 0
 ).quant_([4,0]).play;
 )
 Pbindef(\pads).clear;
@@ -269,7 +272,7 @@ Pbindef(\lead,
 	\rel, 0.125,
 	\amp, 1,
 	\pan, Pwhite(-0.8, 0.8, inf),
-	\addAction, 0,
+	\addAction, 1,
 ).quant_([4,0]).play;
 )
 Pbindef(\lead).stop;
@@ -333,7 +336,7 @@ Pbindef(\lead,
 	\dur, 0.25,
 	\atk, 0.0,
 	\rel, 1,
-	\amp, Pseq([1,0.5, 0.7, 0.7],inf) * 0.7,
+	\amp, Pseq([1,0.5, 0.7, 0.7],inf) * 0.6,
 	\addAction, Prand([0,1],inf),
 	\pan, Pseg([-1.0, 1.0, -1.0],[4,4],\lin,inf)
 ).quant_([4]).stop.play;
@@ -532,7 +535,7 @@ MIDIIn.connectAll;
 	//args.postln;
 	if( args[0] > 0, {
 		"WARNING: pad B4 pressed - adding DJ filter".postln;
-		~filter = Synth(\dejay_filter, [\freq, ~filter_freq, \rq, ~filter_rq], target: RootNode(Server.default), addAction: \addToTail);
+		~filter = Synth(\dejay_filter, [\cf, ~filter_cf, \rq, ~filter_rq], target: RootNode(Server.default), addAction: \addToTail);
 	}, {
 		"WARNING: pad B4 released - releasing DJ filter".postln;
 		~filter.free;
@@ -591,7 +594,7 @@ MIDIIn.connectAll;
 ~k1.free;
 ~k1 = MIDIFunc.cc({
 	arg ...args;
-	args.postln;
+	//args.postln;
 	if( args[0] > 10, {
 		//s.mute;
 	}, {
@@ -604,7 +607,7 @@ MIDIIn.connectAll;
 ~k2 = MIDIFunc.cc({
 	arg ...args;
 	//args.postln;
-	var delaywet = args[0].linlin(0, 127, 0.0, 2.0);
+	var delaywet = args[0].linlin(0, 127, 0.0, 4.0);
 	("delay wet " ++ delaywet.round(0.001)).postln;
 	~delay.set(\wet, delaywet);
 },2);
@@ -612,43 +615,46 @@ MIDIIn.connectAll;
 ~k3.free;
 ~k3 = MIDIFunc.cc({
 	arg ...args;
+
 	var delaylpf = args[0].linexp(0, 127, 120, 10000);
-	("delay lpf " ++ delaylpf.round(0.001)).postln;
-	~delay.set(\lpf, delaylpf);
+	("delay cf " ++ delaylpf.round(0.001)).postln;
+	~delay.set(\cf, delaylpf);
 /*	var delaytime = args[0].linlin(0, 127, 1/16, 2.0);
 	("delay time " ++ delaytime.round(0.001) ).postln;
 	delaytime = delaytime * t.beatDur;
 	~delay.set(\delaytime, delaytime);*/
-
 },3);
 
 ~k4.free;
 ~k4 = MIDIFunc.cc({
 	arg ...args;
-	/*var delayfb = args[0].linlin(0, 127, 0.0, 0.999);
-	("delay fb " ++ delayfb.round(0.001)).postln;
-	~delay.set(\fb, delayfb);*/
+
+	var delay_rq = args[0].linexp(0, 127, 0.5, 100).reciprocal;
+	("delay rq " ++ delay_rq.round(0.001)).postln;
+	~delay.set(\rq, delay_rq);
 
 },4);
 
 ~k5.free;
 ~k5 = MIDIFunc.cc({
 	arg ...args;
+	//args.postln;
 },5);
 
 ~k6.free;
 ~k6 = MIDIFunc.cc({
 	arg ...args;
-	args.postln;
+	//args.postln;
 
 },6);
 
 ~k7.free;
 ~k7 = MIDIFunc.cc({
 	arg ...args;
-	~filter_freq = args[0].linexp(0, 127, 100, 10000);
-	("filter freq " ++ ~filter_freq.round(0.001)).postln;
-	~filter.set(\freq, ~filter_freq);
+	//args.postln;
+	~filter_cf = args[0].linexp(0, 127, 120, 10000);
+	("filter cf " ++ ~filter_cf.round(0.001)).postln;
+	~filter.set(\cf, ~filter_cf);
 
 },7);
 
@@ -656,7 +662,7 @@ MIDIIn.connectAll;
 ~k8 = MIDIFunc.cc({
 	arg ...args;
 	//args.postln;
-	~filter_rq = args[0].linexp(0, 127, 1, 100).reciprocal;
+	~filter_rq  = args[0].linexp(0, 127, 0.5, 100).reciprocal;
 	("filter rq " ++ ~filter_rq.round(0.001)).postln;
 	~filter.set(\rq, ~filter_rq);
 },8);

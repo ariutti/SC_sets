@@ -9,25 +9,16 @@
 s.options.numBuffers = 1024 * 32;
 //increase the memory available to the server
 s.options.memSize = 8192 * 128;
-//boot the server
-//start proxyspace
-//p=ProxySpace.push(s);
-//p.makeTempoClock;
-//p.clock = TempoClock.default;
-
-/*
-//start tempo clock
-p.makeTempoClock;
-//give proxyspace a tempo
-p.clock.tempo = 120/60;
-*/
 
 //display the tree
 //s.plotTree;
 s.waitForBoot({
 	Task({
+		var initTime = 0;
+		var currentTime = 0;
 		// load "my samples"
-		"loading \"mySamples\" samples (it will take some time)".postln;
+		"WARNING: loading \"mySamples\" samples (it will take some time ~ 10secs approx)".postln;
+		initTime = Date.localtime.rawSeconds;
 		d = nil;
 		d = Dictionary.new;
 		d.add(\foldernames -> PathName(thisProcess.nowExecutingPath.dirname +/+ "../mySamples").entries);
@@ -36,16 +27,19 @@ s.waitForBoot({
 				arg sf;
 				//Buffer.read(s,sf.fullPath);
 				if( sf.isFile && sf.extension.toLower == "wav", {
-					//("loading buffer: " ++ sf.fileName).postln;
-					Buffer.read(s,sf.fullPath);
-					//s.sync;¿
+					("loading buffer: (folder "++d[\foldernames][i].folderName++"): " ++ sf.fileName).postln;
+					//s.sync;
+					Buffer.read(s, sf.fullPath);
 				});
 			});
 		)});
+		currentTime = Date.localtime.rawSeconds;
+		("elapsed: " ++ (currentTime-initTime)).postln;
 
 
 		// load "dirt" samples
-		"loading \"dirt\" samples  (it will take a looong time)".postln;
+		"WARNING: loading \"dirt\" samples  (it will take a looong time ~ 90secs approx)".postln;
+		initTime = Date.localtime.rawSeconds;
 		~dirt = nil;
 		~dirt = Dictionary.new;
 		~dirt.add(\foldernames -> PathName("/home/nicola/Musica/samples/Dirt-Samples").entries);
@@ -58,14 +52,16 @@ s.waitForBoot({
 
 				if( sf.isFile && sf.extension.toLower == "wav", {
 					("loading buffer (folder "++~dirt[\foldernames][i].folderName++"): " ++ sf.fileName).postln;
-					Buffer.read(s,sf.fullPath);
 					//s.sync;
+					Buffer.read(s,sf.fullPath);
 				});
 			});
 		)});
+		currentTime = Date.localtime.rawSeconds;
+		("elapsed: " ++ (currentTime-initTime)).postln;
 
 
-		"loading \"sonatina\" samples".postln;
+		"WARNING: loading \"sonatina\" samples".postln;
 		// load samples from sonatina
 		// for ~rootpah, see "MasterOfMasters.scd"
 		~path = PathName(thisProcess.nowExecutingPath.dirname +/+ "../mySamples2");
@@ -142,6 +138,7 @@ s.waitForBoot({
 	}).start;
 	//~samples = ~loadfunc.(\violins_1st_sus, "1st Violins", "1st-violins-sus-", ~samples); s.sync;
 
+	//100.wait;
 	4.wait;
 
 
@@ -163,32 +160,28 @@ s.waitForBoot({
 
 	3.wait;
 
-
 	//display the oscilloscope
 	s.scope;
-
 	//display the meter
 	s.meter;
-
 	// display the freqscope
-	///s.freqscope;
-
+	//s.freqscope;
 	//display tree
 	//s.plotTree;
 
 	// MIDI IN ///////////////////////////////////////////////
-	//MIDIClient.init;
-	//s.sync;
-	//MIDIIn.connectAll;
+	MIDIClient.init;
 	s.sync;
+	5.wait;
+	MIDIIn.connectAll;
+	s.sync;
+	5.wait;
 
 	s.volume_(0);
 
 
-	"Setup done!".postln;
+	"\nWARNING: Setup done!".postln;
 	"\nWARNING: remember to connect SC to OBS".postln;
-
-
 });
 )
 
