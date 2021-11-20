@@ -9,6 +9,7 @@ t = TempoClock.default
 (
 t.tempo_(60/60);
 Tdef(\chordChanger).stop;
+~scale = Scale.major;
 ~tonica = 0;
 ~root = 2; // D
 )
@@ -33,7 +34,7 @@ s.meter;
 Pbindef(\sitar,
 	\instrument,\bplaym,
 	\buf, Pseq([~dirt["sitar"][6]],1) ++ Pindex( ~dirt["sitar"], Prand([1,2,4,6],inf), inf),
-	\dur, Prand([7,11,13],inf),
+	\dur, Prand([7,11,13],inf) * 2,
 	\amp, 1,
 	\rel, 15,
 	\rate, 1,
@@ -42,17 +43,17 @@ Pbindef(\sitar,
 )
 Pbindef(\sitar).stop;
 
-
+s.scope
 (
 Pbindef(\pads,
 	\instrument, \sinfb,
-	\scale, Scale.major,
+	\scale, Pfunc({~scale}),
 	\root, Pfunc({~root}),
 	\octave, Prand([4,5,6], inf),
 	\degree, Pfunc({~tonica}) + Pseq([0,4],inf),
 	\mtranspose, Pwhite(-0.02, 0.02, inf),
 	\fb, 0.5,
-	\amp, 0.05,
+	\amp, 0.025,
 	\atk, 2,
 	\rel, 2,
 	\dur, 0.125,
@@ -68,6 +69,7 @@ Pbindef(\pads, \fb, 1.3);
 (
 Pbindef(\bass,
 	\instrument, \ring1,
+	\scale, Pfunc({~scale}),
 	\root, Pfunc({~root}),
 	\octave, 1 + [3,4], // 1+ [3,4,7]
 	\degree, Pfunc({~tonica}) + Pseq([
@@ -112,6 +114,10 @@ Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,2,\rel, 0.05, \rate, 2,\amp,
 Pbindef(\s,\instrument,\bplaym,\buf,d["sstick"][0],\dur,2,\amp,0.8,\rel,0.2,\rate,0.8,\addAction,Pwrand([0, 1], [1, 7].normalizeSum, inf) ).quant_([4,1]).stop.play;
 
 
+// alternative snare
+Pbindef(\s,\instrument,\bplaym,\buf,~dirt["jazz"][7],\dur,2,\amp,3,\rel,1,\rate,0.9,\addAction,1).quant_([4,1]).play;
+
+
 //some sort of glithes
 (
 Pbindef(\yeah,
@@ -132,6 +138,7 @@ Pbindef(\yeah).stop;
 (
 Pbindef(\melody,
 	\instrument, \fm4_perc,
+	\scale, Pfunc({~scale}),
 	\root, Pfunc({~root}),
 	\octave, Prand([5,6], inf),
 	\degree, Pfunc({~tonica}) + Pseq([0,1],inf),
@@ -152,29 +159,36 @@ Pbindef(\melody,
 ).quant_([4,0.5]).stop.play;
 )
 Pbindef(\melody).stop;
-Pbindef.gui;
+Pbindef(\melody).clear;
+Pbindef(\melody, \atk, 0.0, \rel, 0.4, \amp, 0.5);
 
-/// double (maybe later)
+
+
+
+// double (to be used when rythm) // DO NOT USE
 (
 Pbindef(\bass,
 	\instrument, \ring1,
+	\scale, Pfunc({~scale}),
 	\root, Pfunc({~root}),
-	\octave, 1 + [3,4,5], // 1+ [3,4,7]
+	\octave, 0 + [3,4,5], // 1+ [3,4,7]
 	\degree, Pfunc({~tonica}) + Pseq([
-		Pseq([Pn(-2,8),Pn(-5,8),Pn(-4,16)], 1), // Bm7 | F#m7 | G
-		Pseq([Pn(0,8),Pn(-3,8),Pn(-4,16)], 1),  // D   | A    | G
-		Pseq([Pn(0,8),Pn(-3,8),Pn(-6,16)], 1),  // D   | A    | Em
+		Pseq([Pn(-2,8),Pn(-5,8),Pn(-4,32)], 1), // Bm7 | F#m7 | G
+		Pseq([Pn(0,8),Pn(-3,8),Pn(-4,32)], 1),  // D   | A    | G
+		Pseq([Pn(0,8),Pn(-3,8),Pn(-6,32)], 1),  // D   | A    | Em
 	],inf),
 	\mtranspose, Pwhite(0.0, 0.02, inf) * [0, 0, 1],
 	\dist, 10,
-	\amp, 0.3 * [1,1,0.125],
+	\amp, 0.4 * [1,1,0.125],
 	\atk, 0.01,
 	\dur, 0.25, //Pseq([Pn(4, 0.5), Pn(4,0.5),Pn(16,0.5)], inf),
 	\rel, 0.2, //Pkey(\dur) * t.beatDur * 2,
 	\pan, [0, 0, Pseq([-1, 1], inf).asStream],
 	\addAction,1
-).quant_([4,0]).play;
+).quant_([4,0.25]).stop.play;
 )
+Pbindef(\bass,\amp, 2 * [1,1,0.125]);
+
 
 
 
@@ -190,10 +204,11 @@ Pbindef(\speak,
 ).quant_(4).play;
 )
 Pbindef(\speak).stop;
+Pbindef(\speak, \amp, 1);
 
 
 // DRUM VARIATIONS ///////////////////////////////////////////////////////////////////////////////
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,4,\amp,1,\rel,0.4,\rate,0.7,\addAction,0).quant_(4).play;
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,2,\rel,0.4,\rate,0.7,\addAction,1).quant_(4).play;
 
 
 // soft drums (already playing)
@@ -216,7 +231,7 @@ Pbindef(\speak).stop;
 
 Pbindef.gui;
 
-// kick: four on the floor @ 60 is too sloe
+// kick: four on the floor @ 60 is too slow
 (
 Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,3,\rel,0.4,\rate,0.7,\addAction,1).quant_(4).play;
 Pbindef(\s,\instrument,\bplaym,\buf,d["sstick"][0],\dur,2,\amp,0.6,\rel,0.2,\rate,0.8,\addAction,Pwrand([0, 1], [1, 7].normalizeSum, inf) ).quant_([4,1]).stop.play;
@@ -231,12 +246,27 @@ Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pwrand([1, Pn(0.5, 2), Pseq([0
 // violent kick (in otto)
 Pbindef(\k,\instrument,\bplaym,\buf,d["k"][1],\dur,0.25,\amp,2,\rel,0.4,\rate,0.7,\addAction,1).quant_(4).play;
 
+
 (
-// super kick
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Prand([0.5, Pn(2,0.25)],inf),\amp,8,\rel,0.03,\rate,0.7,\addAction,1).quant_(4).play;
+// super kick (now BPM has turned 120 BPM)
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Prand([0.5, Pn(2,0.25)],inf),\amp,2,\rel,0.03,\rate,0.7,\addAction,1).quant_(4).play;
 Pbindef(\s,\instrument,\bplaym,\buf,d["sstick"][2],\dur,1,\amp,4,\rel,0.05,\rate,0.7,\addAction,Pwrand([0, 1], [1, 7].normalizeSum, inf) ).quant_([4,0.5]).stop.play;
-Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel, 0.05, \rate, 2,\amp, Pgauss(0.4,0.01, inf) * 1).quant_([4, 0.5]).play;
+Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel, 0.05, \rate, 2,\amp, Pgauss(0.4,0.01, inf) * 1).quant_([4, 0.25]).play;
 )
+
+// more profound kick
+(
+Pbindef(\k,\instrument,\bplaym,\buf,~dirt["drumtraks"][6],\dur,Prand([0.5, Pn(2,0.25)],inf),\amp,16,\rel,0.03,\rate,0.7,\addAction,1).quant_(4).play;
+Pbindef(\s,\instrument,\bplaym,\buf,~dirt["jazz"][7],\dur,1,\amp,2,\rel,0.3,\rate,0.9,\addAction,1).quant_([4,0.5]).stop.play;
+Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel, 0.05, \rate, 2,\amp, Pgauss(0.4,0.01, inf) * 1).quant_([4, 0.25]).stop.play;
+Pbindef(\tabla).stop;
+Pbindef(\yeah).stop;
+)
+
+
+Pbindef(\k,\instrument,\bplaym,\buf,~dirt["drumtraks"][6],\dur,0.5,\amp,16,\rel,0.1,\rate,1,\addAction,1).quant_(4).play;
+Pbindef(\k).clear;
+d.keys
 
 
 Pbindef.gui;
@@ -244,9 +274,11 @@ Pbindef.gui;
 // MELODY ///////////////////////////////////////////////////////////////////////////////////
 
 
+// more percussive
 (
 Pbindef(\melody,
 	\instrument, \fm4_perc,
+	\scale, Pfunc({~scale}),
 	\root, Pfunc({~root}),
 	\octave, 7, //Prand([5,6,7], inf),
 	\degree, Pfunc({~tonica}) + Pseq([2,0,-3],inf),
@@ -268,9 +300,11 @@ Pbindef(\melody,
 )
 
 
+// round robin melody
 (
 Pbindef(\melody,
 	\instrument, \fm4_perc,
+	\scale, Pfunc({~scale}),
 	\root, Pfunc({~root}),
 	\octave, Prand([5,6,7], inf),
 	\degree, Pfunc({~tonica}) + Pseq([2,0,-3],inf),
@@ -287,7 +321,8 @@ Pbindef(\melody,
 	\iAdd, 0,
 	\pan, Pseq([-0.8, 0.8], inf),
 	\lag, 0.0, //Pwhite(0.0, 0.025, inf),
-	\addAction, 0
+	\addAction, 0,
+	\stretch, 1
 	).quant_([4,0.5]).play;
 )
 
@@ -298,6 +333,7 @@ Pbindef(\melody).stop;
 Pbindef(\k).stop; Pbindef(\s).stop;Pbindef(\hh).stop;
 Pbindef(\speak).stop;
 Pbindef(\bass).stop;
+Pbindef(\sitar).stop;
 )
 
 Pbindef.gui

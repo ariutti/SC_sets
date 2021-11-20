@@ -1157,7 +1157,7 @@ CAOS SINE
 to be used with somwthing like this:
 
 (
-~caossine = Pbind(
+Pbindef(\caossine,
 	\instrument,\caossine,
 	\scale, Scale.minorPentatonic,
 	\degree, 0,
@@ -1172,11 +1172,12 @@ to be used with somwthing like this:
 	\sus, 0,
 	\rel, Pexprand(0.1,0.3, inf),
 	\amp, 0.3,
-	\pan, Pwhite(-1.0, 1.0, inf)
+	\pan, Pwhite(-1.0, 1.0, inf),
+\addAction,1
 );
 )
-~caossine.play;
-~caossine.stop;
+Pbindef(\caossine).play;
+Pbindef(\caossine).stop;
 */
 (
 SynthDef(\caossine,
@@ -1219,7 +1220,7 @@ or this for the "matrix scream effect" (to be triggered only from time to time)
 try also with other value for parameter c (0.4, 0.7) to obtain other interesting
 talking effects|
 (
-~fbsin = Pbind(
+Pbindef(\matrix_scream,
 	\instrument,\caossinemove,
 	\scale, Scale.minorPentatonic,
 	\degree, 0,
@@ -1233,13 +1234,17 @@ talking effects|
 	\sus, 0.7,
 	\rel, 0.1, //Pexprand(0.1,0.3, inf),
 	\amp, 0.3,
-	\pan, 0.0 //Pwhite(-1.0, 1.0, inf)
-);)
+	\pan, 0.0, //Pwhite(-1.0, 1.0, inf),
+\addAction,1
+);
+)
+Pbindef(\matrix_scream).play;
+Pbindef(\matrix_scream).stop;
 
 
 // or like this for some hifreq "cutting blades"
 (
-~fbsin = Pbind(
+Pbindef(\caossine,
 	\instrument,\caossinemove,
 	\scale, Scale.minorPentatonic,
 	\degree, Pseq([0,1,2,3], inf),
@@ -1255,6 +1260,8 @@ talking effects|
 	\amp, 0.3,
 	\pan, 0.0 //Pwhite(-1.0, 1.0, inf)
 );)
+Pbindef(\caossine).play;
+Pbindef(\caossine).stop;
 */
 
 (
@@ -1280,7 +1287,7 @@ HENON 2D
 to be used with something like this:
 
 (
-~henon = Pbind(
+Pbindef(\henon,
 	\instrument,\henon2D,
 	\scale, Scale.minorPentatonic,
 	\degree, 0,
@@ -1295,9 +1302,10 @@ to be used with something like this:
 	\rel, Pexprand(0.1,0.2, inf),
 	\amp, 0.3,
 	\pan, Pwhite(-1.0, 1.0, inf)
-);)
-~henon.play;
-
+);
+)
+Pbindef(\henon).play;
+Pbindef(\henon).stop;
 */
 (
 SynthDef(\henon2D,
@@ -1700,7 +1708,7 @@ Pbindef(\dfm,
 	\noise, 0.03,
 	\dur, 0.25,
 	\addAction,1
-).quant_(4);
+).quant_(4).play;
 )
 */
 

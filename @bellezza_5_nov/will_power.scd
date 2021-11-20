@@ -1,8 +1,9 @@
 (
-~scale = Scale.major;
 t = TempoClock.default;
 t.tempo_(96/60);
+~scale = Scale.major;
 ~root = 0;
+Tdef(\chordChanger).stop;
 )
 
 ~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,1.0]);
@@ -30,9 +31,9 @@ s.meter
 SynthDef(\mySin, {
 	|out=0, pan=0, amp=1.0, freq=440, atk=0.01, rel=1.0|
 	var sig, env;
-	//sig = LFPulse.ar(freq + SinOsc.ar(6, mul:10)).bipolar * 0.3;
+	sig = LFPulse.ar(freq + SinOsc.ar(6, mul:10)).bipolar * 0.3;
 	sig = LFTri.ar(freq + SinOsc.ar(30, mul:10)).bipolar * 2; // change vibrato to fb
-	//sig = SinOsc.ar(freq);
+	sig = SinOsc.ar(freq);
 	env = EnvGen.ar(Env.perc(atk, rel), doneAction:2);
 	//sig = RLPF.ar(sig, freq*5, 1);
 	sig = sig * env * amp;
@@ -173,19 +174,23 @@ SynthDef(\dist, {
 Pbindef(\pads,
 	\instrument, \dist,
 	\scale, Pfunc({ ~scale }),
+	\root, Pfunc({~root}),
 	\mtranspose, Pwhite(-0.01, 0.01, inf).clump(6),
 	\octave, Prand([3,4,5], inf).clump(6),
 	\degree, Pseq([0,4,7,2], inf),
 	\pan, Pwhite(-1.0, 1.0 ,inf).clump(6),
-	\amp, Pgauss(0.3, 0.01, inf).clump(6) * 0.7,
+	\amp, Pgauss(0.3, 0.01, inf).clump(6) * 0.4,
 	\dur, 10,
 	\addAction,0
 ).quant_(4).play;
 )
 Pbindef(\pads).stop;
 
+
+// DRUMS /////////////////////////////////////////////////////////////
+
 // dry kick
-Pbindef(\k,\instrument,\bplaym,\buf,~dirt["drumtraks"][6],\dur,1,\amp,2,\rel,8,\rate,1,\addAction,1, \lag,Pwhite(0.0, 0.02, inf), \stretch, 1).quant_(4).play;
+Pbindef(\k,\instrument,\bplaym,\buf,~dirt["drumtraks"][6],\dur,1,\amp,8,\rel,8,\rate,1,\addAction,1, \lag,Pwhite(0.0, 0.02, inf), \stretch, 1).quant_(4).play;
 
 
 // more deep kick
@@ -195,17 +200,19 @@ Pbindef(\k,\instrument,\bplaym,\buf,d["k"][1],\dur,1,\amp,4,\rel,8,\rate,1,\addA
 // hh in levare
 // snare con rimshot
 (
-Pbindef(\k,\instrument,\bplaym,\buf,~dirt["drumtraks"][6],\dur,1,\amp,4,\rel,8,\rate,1,\addAction,1, \lag,Pwhite(0.0, 0.02, inf), \stretch, 1).quant_(4).play;
+Pbindef(\k,\instrument,\bplaym,\buf,~dirt["drumtraks"][6],\dur,1,\amp,8,\rel,8,\rate,1,\addAction,1, \lag,Pwhite(0.0, 0.02, inf), \stretch, 1).quant_(4).play;
 
 Pbindef(\s,\instrument,\bplaym,\buf,~dirt["drumtraks"][8],\dur,Pwrand([2, Pseq([0.25,1.75],1)],[4,1].normalizeSum,inf),\amp,1,\atk,0.0,\rel,5,\rate,1,\addAction,1,\lag,0.0, \stretch, 1).quant_([4,1]).stop.play;
 
 Pbindef(\hh,\instrument,\bplaym,\buf,~dirt["drumtraks"][4],\dur,1,\amp,0.8,\atk,0.0,\rel,0.1,\rate,1,\addAction,1,\lag,0.0, \stretch, 1).quant_([4,0.5]).stop.play;
 )
 
+(
 // add more elements
 Pbindef(\striscio,\instrument,\bplaym,\buf,~dirt["drumtraks"][0],\dur,2,\amp,4,\atk,0.0,\rel,5,\rate,1,\addAction,1).quant_([4,1]).stop.play;
 
 Pbindef(\hh2,\instrument,\bplaym,\buf,~dirt["drumtraks"][7],\dur,0.25,\amp,0.5,\atk,0.0,\rel,Prand([0.05,0.1],inf),\rate,Pwhite(0.99,1.01,inf),\addAction,1).quant_([4,0]).play;
+)
 
 (
 Pbindef(\k).stop;
@@ -278,6 +285,75 @@ Pbindef(\bass,
 )
 
 
+
+
+
+// BASS //////////////////////////////////////////////
+(
+Pbindef(\bass,
+	\instrument, \sinfb,
+	\scale, Pfunc({ ~scale }),
+	\fb, 0.9, //Pseg([0.5, 2.5, 0.5], [8,8], \lin, inf),
+	\root, 0,
+	\amp, 1,
+
+	//\octave, Prand([3,4,5], inf),
+	//\degree, Prand([0,0,-1,0,4, 0,0,-7,0], inf),
+
+	\octave, Prand([[3,4]], inf),
+	\degree, Pseq([
+		Pn(0, 16), Pn(3,4), Pn(4,4), // C | C | F  - G
+		//Pn(0, 14), 0, -1,  Pn(-2,4), Pn(-3,4), // C | C | Am | G
+		Pn(0, 16), Pn(3,4), Pn(4,4), // C | C | F - G
+		Pn(5, 16), Pn(3,8), Pn(4,8)  // Am | Am | F | G ||
+	],inf), //Prand([0,0,-1,0,4, 0,0,-7,0], inf),
+
+
+
+	\rate, 1, //Prand([0.2, 0.6], inf),
+	\dur, 0.5, //Pseq([Pn(0.25, 2), 0.5], inf), //Pseq([0.25, 0.25, 0.25, 3.75, 0.25, 0.25, 0.25, 2.75], inf), //Pbjorklund2(3,8, inf, 0)/4,
+	\atk, 0.01,
+	\rel, 0.2,
+	\addAction, 1,
+	\stretch, 1
+).quant_([4, 0]).play;
+)
+Pbindef(\bass, \amp, 1, \rel, 0.2);
+Pbindef(\bass).clear.stop;
+
+
+
+// duble bass with all the chord
+(
+Pbindef(\bass,
+	\instrument, \sinfb,
+	\scale, Pfunc({ ~scale }),
+	\fb, 0.9, //Pseg([0.5, 2.5, 0.5], [8,8], \lin, inf),
+	\root, 0,
+	\amp, 0.5,
+
+	//\octave, Prand([3,4,5], inf),
+	//\degree, Prand([0,0,-1,0,4, 0,0,-7,0], inf),
+
+	\octave, Prand([[3,4]], inf),
+	\degree, Pseq([
+		Pn(0, 32), Pn(3,8), Pn(4,8), // C | C | F  - G
+		//Pn(0, 14), 0, -1,  Pn(-2,4), Pn(-3,4), // C | C | Am | G
+		Pn(0, 32), Pn(3,8), Pn(4,8), // C | C | F - G
+		Pn(5, 32), Pn(3,16), Pn(4,16)  // Am | Am | F | G ||
+	],inf), //Prand([0,0,-1,0,4, 0,0,-7,0], inf),
+
+
+	\rate, 1, //Prand([0.2, 0.6], inf),
+	\dur, 0.25, //Pseq([Pn(0.25, 2), 0.5], inf), //Pseq([0.25, 0.25, 0.25, 3.75, 0.25, 0.25, 0.25, 2.75], inf), //Pbjorklund2(3,8, inf, 0)/4,
+	\atk, 0.01,
+	\rel, 0.07,
+	\addAction, 1,
+	\stretch, 1
+).quant_([4, 0]).play;
+)
+
+/*
 // other phrase (in minor modulation)
 // C | C | Am | G
 (
@@ -302,73 +378,7 @@ Pbindef(\bass,
 	\stretch, 1
 ).quant_([4, 0]).play;
 )
-
-
-
-//
-(
-Pbindef(\bass,
-	\instrument, \doublebass,
-	\scale, Pfunc({ ~scale }),
-	\fb, 0.9, //Pseg([0.5, 2.5, 0.5], [8,8], \lin, inf),
-	\root, 0,
-	\amp, 2,
-
-	//\octave, Prand([3,4,5], inf),
-	//\degree, Prand([0,0,-1,0,4, 0,0,-7,0], inf),
-
-	\octave, Prand([[3,4]], inf),
-	\degree, Pseq([
-		Pn(0, 16), Pn(3,4), Pn(4,4), // C | C | F  - G
-		//Pn(0, 14), 0, -1,  Pn(-2,4), Pn(-3,4), // C | C | Am | G
-		Pn(0, 16), Pn(3,4), Pn(4,4), // C | C | F - G
-		Pn(5, 16), Pn(3,8), Pn(4,8)  // Am | Am | F | G ||
-	],inf), //Prand([0,0,-1,0,4, 0,0,-7,0], inf),
-
-
-
-	\rate, 1, //Prand([0.2, 0.6], inf),
-	\dur, 0.5, //Pseq([Pn(0.25, 2), 0.5], inf), //Pseq([0.25, 0.25, 0.25, 3.75, 0.25, 0.25, 0.25, 2.75], inf), //Pbjorklund2(3,8, inf, 0)/4,
-	\atk, 0.01,
-	\rel, 0.4,
-	\addAction, 1,
-	\stretch, 1
-).quant_([4, 0]).play;
-)
-Pbindef(\bass).stop;
-
-
-
-// duble bass with all the chord
-(
-Pbindef(\bass,
-	\instrument, \sinfb,
-	\scale, Pfunc({ ~scale }),
-	\fb, 0.9, //Pseg([0.5, 2.5, 0.5], [8,8], \lin, inf),
-	\root, 0,
-	\amp, 0.7,
-
-	//\octave, Prand([3,4,5], inf),
-	//\degree, Prand([0,0,-1,0,4, 0,0,-7,0], inf),
-
-	\octave, Prand([[3,4]], inf),
-	\degree, Pseq([
-		Pn(0, 32), Pn(3,8), Pn(4,8), // C | C | F  - G
-		//Pn(0, 14), 0, -1,  Pn(-2,4), Pn(-3,4), // C | C | Am | G
-		Pn(0, 32), Pn(3,8), Pn(4,8), // C | C | F - G
-		Pn(5, 32), Pn(3,16), Pn(4,16)  // Am | Am | F | G ||
-	],inf), //Prand([0,0,-1,0,4, 0,0,-7,0], inf),
-
-
-
-	\rate, 1, //Prand([0.2, 0.6], inf),
-	\dur, 0.5, //Pseq([Pn(0.25, 2), 0.5], inf), //Pseq([0.25, 0.25, 0.25, 3.75, 0.25, 0.25, 0.25, 2.75], inf), //Pbjorklund2(3,8, inf, 0)/4,
-	\atk, 0.01,
-	\rel, 0.07,
-	\addAction, 1,
-	\stretch, 0.5
-).quant_([4, 0]).play;
-)
+*/
 
 
 // MIDI /////////////////////////////////////////////////////////////////////////////////////

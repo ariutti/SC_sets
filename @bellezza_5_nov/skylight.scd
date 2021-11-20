@@ -1,5 +1,7 @@
+(
 t = TempoClock.default;
 t.tempo_(136/60);
+)
 
 // CHORDS
 //| F | Bb |
@@ -42,6 +44,7 @@ Pbindef(\pads,
 	\rel, 4,
 	\pan, Pwhite(-1.0, 1.0, inf).clump(3),
 	\dur, 8,
+	\addAction,0
 ).quant_([4]).play;
 )
 Pbindef(\pads,\degree, Pseq([[0,4,7]],inf)).play; // F
@@ -79,6 +82,40 @@ Pbindef(\noises).stop;
 Pbindef(\noises,\degree, Pseq([0], inf));
 
 
+
+// FXS ////////////////////////////////////////////////////////////////////////
+(
+Pbindef(\invaders).stop;
+Pbindef(\invaders,
+	\instrument,\bplaym,
+	\buf, Pindex(~dirt["invaders"], Pseq([0,9,11,16],inf),inf), //0,9,11,16
+	\dur, Prand([5,7,13],inf),
+	\amp, Pgauss(0.7, 0.05, inf),
+	\rel, 0.1,
+	\rate, (-2).midiratio,
+	\pan, Pseq([-1.0, 1.0], inf),
+	\addAction,0
+).quant_([4,1]).stop.play;
+)
+Pbindef(\invaders, \amp, 0.4);
+
+(
+Pbindef(\alert).stop;
+Pbindef(\alert,
+	\instrument,\bplaym,
+	//\buf, Pindex(~dirt["invaders"], Prand((0..~dirt["invaders"].size-1), inf),inf),
+	\buf, Pindex(~dirt["invaders"], Pseq([17],inf),inf), //0,9,11,16
+	\dur, 3 * Prand([0.5, 1,2],inf),
+	\amp, Pgauss(0.2, 0.05, inf),
+	\atk, 0.0,
+	\rel, 0.5,
+	\rate, -0.11 + (-3 + Prand([0,11],inf)).midiratio,
+	\addAction,0
+).quant_([4,1]).stop.play;
+)
+Pbindef(\alert, \amp, 0.1);
+
+
 // CHIMES /////////////////////////////////////////////////////////////////////
 (
 //Pbindef(\chimes).stop;
@@ -110,9 +147,8 @@ Pbindef(\chimes,
 	\pan, Pwhite(-1.0, 1.0, inf),
 	\dur, 0.5,
 	\addAction,0
-).quant_([4]);
+).quant_([4]).play;
 )
-Pbindef(\chimes).play;
 Pbindef(\chimes).stop;
 
 
@@ -173,8 +209,6 @@ SynthDef(\squarebass, {
 	Out.ar(out, Pan2.ar(sig, pan));
 }).add;
 );
-*/
-
 
 (
 Pbindef(\bass,
@@ -186,7 +220,7 @@ Pbindef(\bass,
 	\cf, 2, \rq, 1.5,
 	\width, 0.5,
 	\dist, 20,
-	\amp, 0.8,
+	\amp, 1.2,
 	\atk, 0.01,
 	\rel, 0.2,
 	\dur, Prand([0.5,1,2],inf),
@@ -203,11 +237,12 @@ Pbindef(\bass).stop;
 (
 
 // 1 on 4
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,4,\amp,1,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,4,\amp,2,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
 
 // ° , , °° |
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pseq([3.5,0.5],inf),\amp,1,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pseq([3.5,0.25,0.25],inf),\amp,1,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pseq([3.5,0.5],inf),\amp,2,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
+// ° , , °°° |
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,Pseq([3.5,0.25,0.25],inf),\amp,2,\rel,0.1,\rate,0.7,\addAction,1).quant_(4).play;
 
 // fof
 Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,1,\rel,0.1,\rate,1,\addAction,1).quant_(4).play;
@@ -300,40 +335,11 @@ Pbindef(\hh,\instrument,\bplay,\buf,d["ch"][0],\dur,0.25,\rel,0.07,\amp,Pexprand
 )
 
 
-// FXS ////////////////////////////////////////////////////////////////////////
-(
-Pbindef(\invaders).stop;
-Pbindef(\invaders,
-	\instrument,\bplaym,
-	\buf, Pindex(~dirt["invaders"], Pseq([0,9,11,16],inf),inf), //0,9,11,16
-	\dur, Prand([5,7,13],inf),
-	\amp, Pgauss(1.0, 0.05, inf),
-	\rel, 0.1,
-	\rate, (-2).midiratio,
-	\pan, Pseq([-1.0, 1.0], inf),
-	\addAction,0
-).quant_([4,1]).stop.play;
-)
-
-(
-Pbindef(\alert).stop;
-Pbindef(\alert,
-	\instrument,\bplaym,
-	//\buf, Pindex(~dirt["invaders"], Prand((0..~dirt["invaders"].size-1), inf),inf),
-	\buf, Pindex(~dirt["invaders"], Pseq([17],inf),inf), //0,9,11,16
-	\dur, 3 * Prand([0.5, 1,2],inf),
-	\amp, Pgauss(1.0, 0.05, inf),
-	\atk, 0.0,
-	\rel, 0.5,
-	\rate, -0.11 + (-3 + Prand([0,11],inf)).midiratio,
-	\addAction,0
-).quant_([4,1]).stop.play;
-)
-
-
 // LEADS //////////////////////////////////////////////////////////////////////
+// think before lunch (what are the chords)
 (
 Pbindef(\melody,
+	\scale ,Scale.major,
 	\instrument, \sinfb,
 	\root, 5,
 	\octave, 6,
@@ -357,6 +363,7 @@ Pbindef(\pads).stop;
 
 (
 Pbindef(\melodyC,
+	\scale ,Scale.major,
 	\instrument, \fm4_perc,
 	\root, 5,
 	\octave, 6,

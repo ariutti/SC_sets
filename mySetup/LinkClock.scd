@@ -1,12 +1,42 @@
-TempoClock.default = LinkClock(120/60).latency_(Server.default.latency);
+(
+// a positive value of latency anticipate the sending of messages to other peer
+// in order for them to sound in time.
+TempoClock.default = LinkClock(96/60).latency_(Server.default.latency); //.enableMeterSync;
 t = TempoClock.default;
+)
+LinkClock.resyncMeter
+
+
 t.free
-t.latency_(0.21)
+LinkClock.play;
+LinkClock.stop; // to exit linkclock
+LinkClock.isRunning;
+LinkClock.all.do({|c| c.stop});
+t.latency_(0.2);
+
+TempoClock.all
+TempoClock.default.isRunning
+TempoClock.default.play
+t
+
+// two different thing are Server latency
+(
+Server.default.latency_( 0.20 );
+t.latency_(0.2);
+)
+
+
+// and Clock latency
+t.latency
+t.latency_(0.2)
+
+
+
 
 // test the LinkClock
 t.tempo_(136/60)
 t.tempo_(120/60)
-t.tempo_(80/60)
+t.tempo_(96/60)
 
 
 (

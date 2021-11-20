@@ -1,10 +1,11 @@
 // BEV
 // This is also the home of the acid Bass patch :)
 
+(
 t = TempoClock.default;
 t.tempo_(120/60);
-s.meter
 Tdef(\chordChanger).stop;
+)
 
 // MIDI IN ///////////////////////////////////////////////
 MIDIClient.init;
@@ -153,7 +154,7 @@ Pbindef(\bev,
 Pbindef(\bev,
 	\instrument, \bplay_filt,
 	\buf, ~dirt["bev"][1],
-	\amp, 2,
+	\amp, 4,
 	\atk, 0.0,
 	\cf, Pseg([100, 5000, 100],[4,4],\exp, inf),
 	\rq, 2,
@@ -235,6 +236,7 @@ SynthDef(\varsaw, {
 )
 
 (
+Pbindef(\k).clear;
 Tdef(\chordChanger).play;
 
 // plain chords
@@ -256,9 +258,10 @@ Pbindef(\chords,
 	\strum, 0.001
 ).quant_([4,0]).play;
 
-//Pbindef(\k,\instrument,\bplaym,\buf,~dirt["909"][0],\dur,4,\amp,2,\rel,0.5,\rate,0.9,\addAction,1).quant_([4,0]).stop.play;
+Pbindef(\k,\instrument,\bplaym,\buf,~dirt["909"][0],\dur,4,\amp,2,\rel,0.5,\rate,0.9,\addAction,1).quant_([4,0]).stop.play;
 )
 
+Pbindef(\k, \dur, 1).clear;
 Tdef(\chordChanger).stop;
 Tdef(\chordChanger).clear;
 
@@ -378,7 +381,7 @@ Pbindef(\bass,
 ).quant_([4,0]);
 )
 Pbindef(\bass).play;
-Pbindef(\bass).clear
+Pbindef(\bass).stop.clear
 
 
 // DRUMS //////////////////////////////////////////////////////////////////////////////////////////////
@@ -446,7 +449,7 @@ Pbindef(\lead,
 	\width, 0.01,
 	\atk, 0.01,
 	\rel, 0.1,
-	\amp, 0.5,
+	\amp, 0.7,
 	\pan, Pwhite(-0.8, 0.8, inf),
 	\addAction,0
 ).quant_([4,0]).stop.play;
@@ -456,7 +459,7 @@ Pbindef(\lead).stop;
 (
 Pbindef(\lead,
 	\instrument, \varsaw,
-	\octave, 6,
+	\octave, Prand([5,6,7], inf),
 	\root, Pfunc({~root}),
 	\scale, Scale.minor,
 	\degree, Pseq([0,2,4].pyramid(3), inf),
@@ -465,7 +468,7 @@ Pbindef(\lead,
 	\width, 0.3,
 	\atk, 0.01,
 	\rel, 0.1,
-	\amp, 0.5,
+	\amp, 0.4,
 	\pan, Pwhite(-1.0, 1.0, inf),
 	\addAction,0
 ).quant_([4,0]).stop.play;
@@ -607,7 +610,21 @@ MIDIIn.connectAll;
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad B1 pressed".postln;
+		"pad B1 pressed - voice spot 'you light up'".postln;
+		(
+			Pbindef(\bev_spot,
+				\instrument, \bplay_filt,
+				\buf, ~dirt["bev"][1],
+				\amp, 4,
+				\rel, t.beatDur * 3,
+				\cf, 1000,
+				\rq, 4,
+				\dur, Pseq([4],1),
+				\pos, 0.0,
+				\rate, 1,
+				\addAction, 0
+			).quant_([4,0]).stop.play;
+		);
 
 	}, {
 		"pad B1 released".postln;
@@ -620,7 +637,21 @@ MIDIIn.connectAll;
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad B2 pressed".postln;
+		"pad B2 pressed - voice spot 'bottle of wine'".postln;
+		(
+			Pbindef(\bev_spot,
+				\instrument, \bplay_filt,
+				\buf, ~dirt["bev"][1],
+				\amp, 3,
+				\rel, t.beatDur * 4,
+				\cf, 1000,
+				\rq, 4,
+				\dur, Pseq([4],1),
+				\pos, 0.25,
+				\rate, 1,
+				\addAction, 0
+			).quant_([4,0]).stop.play;
+		);
 
 	}, {
 		"pad B2 released".postln;
@@ -634,7 +665,21 @@ MIDIIn.connectAll;
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad B3 pressed".postln;
+		"pad B3 pressed - voice spot 'story'".postln;
+		(
+			Pbindef(\bev_spot,
+				\instrument, \bplay_filt,
+				\buf, ~dirt["bev"][1],
+				\amp, 0.7,
+				\rel, t.beatDur * 2,
+				\cf, 1000,
+				\rq, 4,
+				\dur, Pseq([4],1),
+				\pos, 0.75,
+				\rate, 1,
+				\addAction, 0
+			).quant_([4,0]).stop.play;
+		);
 
 	}, {
 		"pad B3 released".postln;
@@ -647,7 +692,21 @@ MIDIIn.connectAll;
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad B4 pressed".postln;
+		"pad B4 pressed - voice spot 'you get alive'".postln;
+		(
+			Pbindef(\bev_spot,
+				\instrument, \bplay_filt,
+				\buf, ~dirt["bev"][1],
+				\amp, 4,
+				\rel, t.beatDur * 4,
+				\cf, 1000,
+				\rq, 4,
+				\dur, Pseq([4],1),
+				\pos, 0.806,
+				\rate, 1,
+				\addAction,1
+			).quant_([4,0]).stop.play;
+		);
 
 
 	}, {
@@ -717,23 +776,26 @@ MIDIIn.connectAll;
 ~k2.free;
 ~k2 = MIDIFunc.cc({
 	arg ...args;
-	args.postln;
-	~verb.set(\dec,2, \lpf,5000, \wet,args[0].linlin(0, 127, 0.0, 1.0) );
+	var verbwet = args[0].linlin(0, 127, 0.0, 1.0);
+	("verb wet " ++ verbwet.round(0.001)).postln;
+	~verb.set(\dec,2, \lpf,5000, \wet,verbwet );
 
 },2);
 
 ~k3.free;
 ~k3 = MIDIFunc.cc({
 	arg ...args;
-	args.postln;
-	~bass_freq = args[0].linexp(0,127,200, 7000.0);
+	var bass_cf = args[0].linexp(0, 127, 200.0, 7000.0);
+	("bass cf " ++ bass_cf.round(0.001)).postln;
+	~bass_freq = bass_cf; //args[0].linexp(0,127,200, 7000.0);
 },3);
 
 ~k4.free;
 ~k4 = MIDIFunc.cc({
 	arg ...args;
-	args.postln;
-	~bass_rq = args[0].linexp(0,127,1, 0.01);
+	var bass_rq = args[0].linexp(0, 127, 1.0, 0.01);
+	("bass rq " ++ bass_rq.round(0.001)).postln;
+	~bass_rq = bass_rq; //args[0].linexp(0,127,1, 0.01);
 
 },4);
 
@@ -741,8 +803,8 @@ MIDIIn.connectAll;
 ~k5 = MIDIFunc.cc({
 	arg ...args;
 	//args.postln;
-	~vocoder_amp = args[0].linlin(0,127,0.0, 1);
-	("~vocoder_amp = " ++ ~vocoder_amp.round(0.001)).postln;
+	//~vocoder_amp = args[0].linlin(0,127,0.0, 1);
+	//("~vocoder_amp = " ++ ~vocoder_amp.round(0.001)).postln;
 },5);
 
 ~k6.free;
@@ -801,7 +863,7 @@ MIDIIn.connectAll;
 Pbindef(\bev_spot,
 	\instrument, \bplay_filt,
 	\buf, ~dirt["bev"][1],
-	\amp, 2,
+	\amp, 4,
 	\rel, t.beatDur * 3,
 	\cf, 1000,
 	\rq, 4,
@@ -850,7 +912,7 @@ Pbindef(\bev_spot,
 Pbindef(\bev_spot,
 	\instrument, \bplay_filt,
 	\buf, ~dirt["bev"][1],
-	\amp, 3,
+	\amp, 4,
 	\rel, t.beatDur * 4,
 	\cf, 1000,
 	\rq, 4,

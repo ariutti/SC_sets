@@ -1,6 +1,10 @@
 //TempoClock.default.tempo_(90/60);
+(
 TempoClock.default.tempo_(136/60);
 Tdef(\chordChanger).stop;
+~scale = Scale.diminished;
+~root = 2;
+)
 
 // chord progression: Fm | Dm
 
@@ -19,8 +23,8 @@ Pbindef(\A).clear;
 Pbindef(\A,
 	\instrument, \test,
 	\octave, Pseq([4,6],inf).clump(2),
-	\scale, Scale.diminished,
-	\root, 2,
+	\scale, Pfunc({~scale}),
+	\root, Pfunc({~root}),
 	\degree, Pseq([Pseq([2,3],8) ,Pseq([0,1],8)], inf),
 	\mtranspose, Pwhite(-0.01, 0.01, inf).clump(2),
 	\fb, Pwhite(0.1, 1, inf).clump(2),
@@ -29,7 +33,7 @@ Pbindef(\A,
 	\dur, 0.5,
 	\amp, 1.6 * Pgauss(0.2, 0.01, inf).clump(2),
 	\strum, 0,
-	\addAction, 1
+	\addAction, 0
 ).quant_([4]).play;
 )
 
@@ -38,8 +42,8 @@ Pbindef(\A,
 Pbindef(\A,
 	\instrument, \test,
 	\octave, Pseq([6,7,8],inf).clump(4),
-	\scale, Scale.diminished,
-	\root, 2,
+	\scale, Pfunc({~scale}),
+	\root, Pfunc({~root}),
 	\mtranspose, Pwhite(-1, 1, inf).clump(2) * Pseg([0.0, 0.04],[4],\lin, inf),
 	\fb, Pwhite(0.1, 1, inf).clump(4),
 	\atk, 0.0,
@@ -62,6 +66,8 @@ SynthDef(\saw, {
 	var env = EnvGen.ar(Env.adsr(atk, 0.0, 0.7, rel),gate, doneAction:2);
 	var sig = SinOscFB.ar(freq, fb) * env;
 	sig = RLPF.ar(sig, freq*8, rq);
+	// added a HPF in order not to create disorder in low frequencies
+	sig = HPF.ar(sig, 120);
 	sig = (sig *dist).tanh;
 
 	Out.ar(0, Pan2.ar(sig*amp, pan));
@@ -73,8 +79,8 @@ SynthDef(\saw, {
 Pbindef(\B,
 	\instrument, \saw,
 	\octave, Pseq([2,3,4],inf).clump(4),
-	\scale, Scale.diminished, //Scale.harmonicMinor,
-	\root, 2,
+	\scale, Pfunc({~scale}),
+	\root, Pfunc({~root}),
 	//\degree, Pseq((0..7), inf),
 	\degree, Pseq([Pseq([[2,2]],4), Pseq([[0,0]],4)], inf),
 	\mtranspose, Pwhite(-0.001, 0.001, inf).clump(4),
@@ -84,7 +90,7 @@ Pbindef(\B,
 	\atk, 0.1,
 	\rel, 1,
 	\dur, 2,
-	\amp, 0.1,
+	\amp, 0.3,
 	\pan, Pwhite(-1.0, 1.0, inf).clump(4),
 	\addAction,0
 ).quant_([4]).stop.play;
@@ -97,7 +103,7 @@ Pbindef(\B,
 	\fb, Pseg([0.1, 1, 0.1],[4,4],\exp,inf),
 	\rq, Pseg([0.1, 0.001, 0.1],[8,8],\lin,inf),
 	\dist, Pseg([1, 200, 1],[16,16],\exp,inf),
-	\amp, 0.1
+	\amp, 0.2
 );
 Pbindef(\B, \degree, Pseq([Pseq([[2,2]],8), Pseq([[0,0]],8)], inf));
 Pbindef(\B, \amp, 0.1);
@@ -186,7 +192,7 @@ Pbindef(\s,
 	// frequency modulation
 	\nf, 3500,\rq, 0.3,\namp, 2,\natk, 0.0, \nrel, 0.2,
 	\dist, 3,
-	\amp, 2,
+	\amp, 0.7,
 	\dur, Pseq([2], inf),
 	\addAction,1
 ).quant_([4,1]).stop.play;
@@ -217,7 +223,7 @@ Pbindef(\clap, \instrument,\bplay,\buf,d["c"][0],\dur,Prand([4,16],inf),\amp,0.5
 
 (
 // alternate HH and clap (use to make some transition)
-Pbindef(\hh,\instrument,\bplaym,\buf,~dirt["808oh"][1],\dur,Pseq([1.5,2.5],inf),\amp,2,\rel,0.2,\rate,0.7,\addAction,1).quant_([4,2]).stop.play;
+Pbindef(\hh,\instrument,\bplaym,\buf,~dirt["808oh"][1],\dur,Pseq([1.5,2.5],inf),\amp,3,\rel,0.7,\rate,0.7,\addAction,1).quant_([4,2]).stop.play;
 Pbindef(\clap, \instrument,\bplay,\buf,d["c"][0],\dur,Prand([4],inf),\amp,0.5,\rate, 0.7,\rel, 0.1,\addAction, 0).quant_([4,1]).stop.play;
 )
 
@@ -226,7 +232,7 @@ Pbindef(\clap, \instrument,\bplay,\buf,d["c"][0],\dur,Prand([4],inf),\amp,0.5,\r
 // VOICE of VINCENT PRICE ////////////////////////////////////////////////////
 ~vincent = Buffer.read(s, "/home/nicola/Scaricati/Telegram Desktop/vincent_price_MLgenerated_test1.wav");
 
-Pbindef(\vincent,\instrument,\bplaym,\buf,~vincent,\dur,Pseq([1],1),\amp,5,\rel,15,\rate,1,\addAction,0).quant_(1).play;
+Pbindef(\vincent,\instrument,\bplaym,\buf,~vincent,\dur,Pseq([1],1),\amp,5,\rel,15,\rate,1,\addAction,1).quant_(1).play;
 
 
 
@@ -244,13 +250,13 @@ SynthDef(\osc, {
 (
 Pbindef(\oua,
 	\instrument, \osc,
-	\scale, Scale.diminished,
-	\root, 2,
+	\scale, Pfunc({~scale}),
+	\root, Pfunc({~root}),
 	\octave, 5,
 	\degree, 6,
 	\dur, Pseq([8],1),
 	\l, 2,
-	\amp, 1,
+	\amp, 0.3,
 	\addAction, 0,
 	\pan, 0.0
 ).quant_([4,1]).stop.play;
@@ -262,13 +268,13 @@ Pbindef(\oua).stop;
 (
 Pbindef(\oua,
 	\instrument, \osc,
-	\scale, Scale.diminished,
-	\root, 2,
+	\scale, Pfunc({~scale}),
+	\root, Pfunc({~root}),
 	\octave, 6, // also try with 3
 	\degree, Pseq( (0..7), inf),
 	\dur, 0.5,
 	\l, t.beatDur * 0.25,
-	\amp, Pseg([0.5, 1.0], 4, \exp, inf) * 0.2,
+	\amp, Pseg([0.5, 1.0], 4, \exp, inf) * 0.4,
 	\addAction, 1,
 	\pan, Pseq([1, -1],inf)
 ).quant_([4,1]).stop.play;
@@ -280,16 +286,16 @@ Pbindef(\oua).stop;
 (
 Pbindef(\stabs,
 	\instrument, \test,
-	\scale, Scale.diminished,
+	\scale, Pfunc({~scale}),
 	\octave, Pseq([4,5],inf).clump(2),
-	\root, 2,
+	\root, Pfunc({~root}),
 	\degree, [2, 0], //Pseq([Pseq([3,3.1],8) ,Pseq([1,2],8)], inf),
 	\mtranspose, Pwhite(-0.02, 0.02, inf).clump(2),
 	\fb, 0.9,
 	\atk, 0.0,
 	\rel, 0.2,
 	\dur, 8,
-	\amp, Pgauss(1, 0.01, inf).clump(2),
+	\amp, Pgauss(1, 0.01, inf).clump(2) * 3,
 	\strum, 0,
 	\addAction, 0
 ).quant_([4, 1.5]).stop.play;

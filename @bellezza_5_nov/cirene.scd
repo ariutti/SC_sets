@@ -19,9 +19,10 @@ MIDIIn.connectAll;
 (
 ~scale = Scale.minor;
 ~root = 4;
-~tonica = -0;
+~tonica = 0;
 );
 
+s.plotTree;
 Pbindef.gui;
 
 ~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,1.0]);
@@ -48,7 +49,7 @@ Pbindef(\stabs,
 	\atk, 0.0,
 	\rel, 0.07,
 	\dur, 8,
-	\amp, Pgauss(1, 0.01, inf).clump(2) * 0.5,
+	\amp, Pgauss(1, 0.01, inf).clump(2) * 0.2,
 	\strum, 0,
 	\addAction, 0
 ).quant_([4, 1.5]).stop.play;
@@ -57,8 +58,66 @@ Pbindef(\stabs).play;
 Pbindef(\stabs).stop;
 
 
-Pbindef(\s,\instrument,\bplay,\buf,d["s"][1],\dur,2,\amp,1,\rel,1,\rate,0.6,\addAction,1).quant_([4, 0.5]).stop;
+(
+Pbindef(\s,
+	\instrument,\bplaym,
+	\buf, ~dirt["808sd"][3],
+	//\dur, Pwrand([2, Pseq([1.25, 0.75], 1)],[10,1].normalizeSum,inf),
+	\dur, Pseq([2],inf),
 
+	\amp,Pgauss(3, 0.1, inf) * 2,
+	\rel, 0.1, //Prand([0.1, 0.2] ,inf),
+	\rate, 1,
+	\addAction,1
+).quant_([4,1]).stop.play;
+)
+
+
+(
+Pbindef(\hh,\instrument,\bplaym,\buf,Pseq([~dirt["808oh"][1]],inf),\dur,1,\amp,0.7,\rel,0.1,\rate,1,\addAction,1).quant_([4,0.5]).stop.play;
+)
+
+
+
+
+//
+
+(
+Pbindef(\second_voice,
+	\instrument, \dfm1,
+	\scale, Pfunc({~scale}),
+	\octave, [4,7],
+	\root, Pfunc({~root}),
+
+	//\mtranspose, Pfunc({~tonica}),
+	//\degree, Pseq([Pn(0,4), Pn(-1,4), Pn(-3,4), Pn(-2,8)],inf),
+	\atk, 0.01,
+	\rel, 0.1,
+	\dist, 60,
+	\amp, 0.4,
+
+	//\degree, Pseq([\, 0, 2, 0],inf),
+	//\dur, Pseq([1.5, 0.5, 0.5, 1.5+4], inf),
+
+	\degree, Pseq([
+		\, 0, 2, 0,
+		\,0,2,0,3,4
+	],inf),
+	\dur, Pseq([
+		1.5, 0.5, 0.5, 1.5+4,
+		1.5, 0.5, 0.5, 0.5, 0.5, (1*0.5)+4
+	], inf),
+
+
+	\addAction, 1
+).quant_([4, 0]).stop.play;
+);
+Pbindef(\second_voice).play;
+Pbindef(\second_voice).stop;
+
+
+
+/*
 // walkin bass in off beat
 (
 Pbindef(\bass,
@@ -79,65 +138,37 @@ Pbindef(\bass,
 );
 Pbindef(\bass).play;
 Pbindef(\bass).stop;
+*/
 
-//
-
-(
-Pbindef(\second_voice,
-	\instrument, \dfm1,
-	\scale, Pfunc({~scale}),
-	\octave, [4,7],
-	\root, Pfunc({~root}),
-	\degree, Pseq([\, 0, 2, 0],inf),
-	\mtranspose, Pfunc({~tonica}),
-	//\degree, Pseq([Pn(0,4), Pn(-1,4), Pn(-3,4), Pn(-2,8)],inf),
-	\atk, 0.01,
-	\rel, 0.1,
-	\dist, 60,
-	\amp, 0.4,
-	\dur, Pseq([1.5, 0.5, 0.5, 4+1.5], inf),
-	\addAction, 1
-).quant_([4]).stop.play;
-);
-Pbindef(\second_voice).play;
-Pbindef(\second_voice).stop;
 
 
 
 Pbindef.all.do({ |item| item.play; });
 s.unmute
 // DRUMS ///////////////////////////////////////////////////////////
+Pbindef(\s,\instrument,\bplay,\buf,d["s"][1],\dur,2,\amp,0.5,\rel,0.1,\rate,0.6,\addAction,1).quant_([4, 1]).stop.play;
+
 (
-Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,2,\amp,1,\rel,0.1,\rate,1,\addAction,1).quant_(4).stop.play;
-
-Pbindef(\s,
-	\instrument,\bplaym,
-	\buf, ~dirt["808sd"][3],
-	\dur, Pwrand([2, Pseq([1.25, 0.75], 1)],[10,1].normalizeSum,inf),
-	\amp,Pgauss(3, 0.1, inf),
-	\rel, 0.1, //Prand([0.1, 0.2] ,inf),
-	\rate, 1,
-	\addAction,1
-).quant_([4,1]).stop.play;
-
-
-Pbindef(\hh,\instrument,\bplaym,\buf,Pseq([~dirt["808oh"][1]],inf),\dur,1,\amp,0.7,\rel,0.1,\rate,1,\addAction,1).quant_([4,0.5]).stop.play;
+Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,8,\amp,1,\rel,0.1,\rate,1,\addAction,1).quant_(4).stop.play;
 )
+
+
 
 Pbindef(\k,\dur, 1, \amp, 4);
 Pbindef(\k,\dur, 4, \amp, 4);
 
 
+// evaluate these and play them later via MIDI BUTTONS
 (
 ~clap = Buffer.read(s, "/home/nicola/Musica/samples/CC0/#99S002 Hands Make Sounds/Claps/clap-toilet-07.wav");
-Pbindef(\clap,\instrument,\bplay,\buf,~clap,\dur,2,\amp,[1,1] * 0.7,\rel,0.125,\rate,1.3 * Pgauss(1, 0.07, inf).clump(2),\addAction,1, \lag,0.0,\strum, Pwhite(0.0, 0.05, inf), \pan, [-1, 1]).quant_([4,2.75]).play;
+Pbindef(\clap,\instrument,\bplay,\buf,~clap,\dur,2,\amp,[1,1] * 0.7,\rel,0.125,\rate,1.3 * Pgauss(1, 0.07, inf).clump(2),\addAction,1, \lag,0.0,\strum, Pwhite(0.0, 0.05, inf), \pan, [-1, 1]).quant_([4,2.75]).stop;
 )
 Pbindef(\clap).clear
 Pbindef(\clap, \rate, 0.7, \rel, 0.1);
 
 (
 ~snap = Buffer.read(s,"/home/nicola/Musica/samples/CC0/#99S002 Hands Make Sounds/Snaps/snap-close-13.wav");
-Pbindef(\snap,\instrument,\bplay,\buf,~snap,\dur,2,\amp,1,\rel,0.125,\rate, Pgauss(1, 0.07, inf).clump(2),\addAction,1, \lag,Pwhite(0.0, 0.01, inf),\pan, [-1, 1], \strum, Pwhite(0.0, 0.02, inf)).quant_([4,1]);
+Pbindef(\snap,\instrument,\bplay,\buf,~snap,\dur,2,\amp,2,\rel,0.125,\rate, Pgauss(1, 0.07, inf).clump(2),\addAction,1, \lag,0,\pan, [-1, 1], \strum, Pwhite(0.0, 0.02, inf)).quant_([4,1]).play;
 )
 Pbindef(\snap,\dur, 1);
 Pbindef(\clap).play;
@@ -150,74 +181,6 @@ Pbindef(\snap).stop;
 
 
 Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,1,\rel,0.1,\rate,1,\addAction,1).quant_(4).stop.play;
-
-
-
-(
-Pbindef(\g1,
-	\instrument,\bplay,
-	\buf,Pindex(d["guitars"], Pseq([3],1),inf),
-	\dur,32,
-	\amp,0.5,
-	\rate,1,
-	\addAction,0
-).quant_(4).stop.play;
-)
-
-
-(
-Pbindef(\g2,
-	\instrument,\bplay,
-	\buf,Pindex(d["guitars"], Pseq([4],1),inf),
-	\dur,16,
-	\amp,0.5,
-	\rate,0.5,
-	\addAction,0,
-	\pan, Pwhite(0.0, 1.0, inf)
-).quant_(4).stop.play;
-)
-
-
-(
-Pbindef(\g3,
-	\instrument,\bplay,
-	\buf,Pindex(d["guitars"], Pseq([1],1),inf),
-	\dur,12,
-	\amp,0.5,
-	\rate,1,
-	\addAction,0,
-	\pan, Pwhite(-1.0, 0.0, inf)
-).quant_(4).stop.play;
-)
-
-
-(
-Pbindef(\g1).stop;
-Pbindef(\g2).stop;
-Pbindef(\g3).stop;
-)
-
-
-/*
-(
-Pbindef(\aggressive_pads,
-	\instrument, \brinkmann1,
-	\scale, Pfunc({~scale}),
-	\octave, [4,7],
-	\root, Pfunc({~root}),
-	\degree, Pseq([\, 0, 2, 0],inf),
-	\mtranspose, Pfunc({~tonica}),
-	//\degree, Pseq([Pn(0,4), Pn(-1,4), Pn(-3,4), Pn(-2,8)],inf),
-	\atk, 0.01,
-	\rel, 0.1,
-	\dist, 60,
-	\amp, 0.4,
-	\dur, Pseq([1.5, 0.5, 0.5, 4+1.5], inf),
-	\addAction, 1
-).quant_([4]).stop.play;
-);
-*/
-
 
 
 
@@ -271,6 +234,20 @@ Pbindef(\aggressive_pads,
 ~padA4 = MIDIFunc.cc({
 	arg ...args;
 	args.postln;
+
+
+	if( args[0] > 0, {
+		"pad A4 pressed - shepard ON".postln;
+		Tdef(\activate_shepard).play;
+
+
+	}, {
+		"pad A4 released - shepard OFF".postln;
+		Tdef(\deactivate_shepard).play;
+
+	});
+
+	/*
 	if( args[0] > 0, {
 		"WARNING: pad A4 pressed - FREEZE".postln;
 		{~freezer.set(\freeze, 1);}.fork(t, Quant(0));
@@ -280,6 +257,7 @@ Pbindef(\aggressive_pads,
 		~freezer.set(\freeze, 0);
 
 	});
+	*/
 },23);
 
 ~padA5.free;
@@ -304,12 +282,12 @@ Pbindef(\aggressive_pads,
 	arg ...args;
 	//args.postln;
 	if( args[0] > 0, {
-		"pad A6 pressed - clap ON".postln;
-		Pbindef(\clap).play;
+		"pad A6 pressed - snap ON".postln;
+		//Pbindef(\clap).play;
 		Pbindef(\snap).play;
 	}, {
-		"pad A6 released - clap OFF".postln;
-		Pbindef(\clap).stop;
+		"pad A6 released - sanp OFF".postln;
+		//Pbindef(\clap).stop;
 		Pbindef(\snap).stop;
 	});
 },25);
@@ -321,12 +299,12 @@ Pbindef(\aggressive_pads,
 
 	if( args[0] > 0, {
 		"pad A7 pressed - shepard ON".postln;
-		Tdef(\activate_shepard).play;
-
+		//Tdef(\activate_shepard).play;
+		"espeak -v en \"cyreene \"".unixCmd;
 
 	}, {
 		"pad A7 released - shepard OFF".postln;
-		Tdef(\deactivate_shepard).play;
+		//Tdef(\deactivate_shepard).play;
 
 	});
 
@@ -465,7 +443,80 @@ Pbindef(\aggressive_pads,
 ~k8.free;
 ~k8 = MIDIFunc.cc({
 	arg ...args;
-	args.postln;
+	~amp_shepards = args[0].linlin(0, 127, 0.0, 4.0);
+	("amp shepard " ++ ~amp_shepards.round(0.001)).postln;
 },8);
 )
+
+
+
+/*
+d["guitars"][3]
+
+(
+Pbindef(\g1,
+	\instrument,\bplay,
+	\buf,Pindex(d["guitars"], Pseq([3],1),inf),
+	\dur,32,
+	\amp,0.5,
+	\rate,1,
+	\addAction,0
+).quant_(4).stop.play;
+)
+
+
+(
+Pbindef(\g2,
+	\instrument,\bplay,
+	\buf,Pindex(d["guitars"], Pseq([4],1),inf),
+	\dur,16,
+	\amp,0.5,
+	\rate,0.5,
+	\addAction,0,
+	\pan, Pwhite(0.0, 1.0, inf)
+).quant_(4).stop.play;
+)
+
+
+(
+Pbindef(\g3,
+	\instrument,\bplay,
+	\buf,Pindex(d["guitars"], Pseq([1],1),inf),
+	\dur,12,
+	\amp,0.5,
+	\rate,1,
+	\addAction,0,
+	\pan, Pwhite(-1.0, 0.0, inf)
+).quant_(4).stop.play;
+)
+
+
+(
+Pbindef(\g1).stop;
+Pbindef(\g2).stop;
+Pbindef(\g3).stop;
+)
+*/
+
+/*
+(
+Pbindef(\aggressive_pads,
+	\instrument, \brinkmann1,
+	\scale, Pfunc({~scale}),
+	\octave, [4,7],
+	\root, Pfunc({~root}),
+	\degree, Pseq([\, 0, 2, 0],inf),
+	\mtranspose, Pfunc({~tonica}),
+	//\degree, Pseq([Pn(0,4), Pn(-1,4), Pn(-3,4), Pn(-2,8)],inf),
+	\atk, 0.01,
+	\rel, 0.1,
+	\dist, 60,
+	\amp, 0.4,
+	\dur, Pseq([1.5, 0.5, 0.5, 4+1.5], inf),
+	\addAction, 1
+).quant_([4]).stop.play;
+);
+*/
+
+
 

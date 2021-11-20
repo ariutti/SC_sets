@@ -7,7 +7,7 @@ TempoClock.default.tempo_(120/60);
 
 (
 ~filter_lofreq = 300;
-~filter_hifreq = 18000;
+~filter_hifreq = 500;
 )
 
 // Dm
@@ -22,13 +22,12 @@ Pbindef(\loop,
 	\loopbpm, 136,
 	\currentBpm, Pfunc({TempoClock.default.tempo}),
 	\atk, 0.0,
-
 	\rel, 0.1,
 	\amp, 1,
 	\start, 0.0,
 	\dur, 4,
 	\addAction, 1
-).quant_(4).stop.play;
+).quant_([4,0]).stop.play;
 )
 
 Pbindef(\loop,\amp, 0.4)
@@ -374,11 +373,9 @@ Pbindef(\speakSpell,\instrument,\bplaym,\buf,Pindex(d["speakspell_letters"], Pse
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A4 pressed - tabla ON".postln;
-		Pbindef(\tabla).play;
+		"pad A4 pressed".postln;
 	}, {
-		"pad A4 released - tabla OFF".postln;
-		Pbindef(\tabla).stop;
+		"pad A4 released".postln;
 	});
 },23);
 
@@ -388,13 +385,9 @@ Pbindef(\speakSpell,\instrument,\bplaym,\buf,Pindex(d["speakspell_letters"], Pse
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad A5 pressed - bass ON".postln;
-		Pbindef(\bass).play;
-
+		"pad A5 pressed".postln;
 	}, {
-		"pad A5 released - bass OFF".postln;
-		Pbindef(\bass).stop;
-
+		"pad A5 released".postln;
 	});
 },24);
 
@@ -404,11 +397,9 @@ Pbindef(\speakSpell,\instrument,\bplaym,\buf,Pindex(d["speakspell_letters"], Pse
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad A6 pressed - pads ON".postln;
-		Pbindef(\pads).play;
+		"pad A6 pressed".postln;
 	}, {
-		"pad A6 released - pads OFF".postln;
-		Pbindef(\pads).stop;
+		"pad A6 released".postln;
 	});
 },25);
 
@@ -418,12 +409,10 @@ Pbindef(\speakSpell,\instrument,\bplaym,\buf,Pindex(d["speakspell_letters"], Pse
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad A7 pressed - sitar ON".postln;
-		Pbindef(\sitar).play;
-	}, {
-		"pad A7 released - sitar OFF".postln;
+		"pad A7 pressed".postln;
 
-		Pbindef(\sitar).stop;
+	}, {
+		"pad A7 released".postln;
 	});
 },26);
 
@@ -433,12 +422,9 @@ Pbindef(\speakSpell,\instrument,\bplaym,\buf,Pindex(d["speakspell_letters"], Pse
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad A8 pressed - melody ON".postln;
-		Pbindef(\melody).play;
-
+		"pad A8 pressed".postln;
 	}, {
-		"pad A8 released - melody OFF".postln;
-		Pbindef(\melody).stop;
+		"pad A8 released".postln;
 	});
 },27);
 
@@ -448,11 +434,9 @@ Pbindef(\speakSpell,\instrument,\bplaym,\buf,Pindex(d["speakspell_letters"], Pse
 	args.postln;
 
 	if( args[0] > 0, {
-		"pad B1 pressed - yeah ON".postln;
-		Pbindef(\yeah).play;
+		"pad B1 pressed".postln;
 	}, {
-		"pad B1 released - yeah OFF".postln;
-		Pbindef(\yeah).stop;
+		"pad B1 released".postln;
 	});
 },28);
 
@@ -461,12 +445,9 @@ Pbindef(\speakSpell,\instrument,\bplaym,\buf,Pindex(d["speakspell_letters"], Pse
 	arg ...args;
 	args.postln;
 	if( args[0] > 0, {
-		"pad B2 pressed - speak ON".postln;
-		Pbindef(\speak).play;
-
+		"pad B2 pressed".postln;
 	}, {
-		"pad B2 released - speak OFF".postln;
-		Pbindef(\speak).stop;
+		"pad B2 released".postln;
 	});
 },29);
 

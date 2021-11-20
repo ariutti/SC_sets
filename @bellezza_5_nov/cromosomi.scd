@@ -9,9 +9,13 @@
 // 0.5
 //| Db  Eb | Fm  Eb || Db  Eb | Fm  Eb |
 
-
+(
 t = TempoClock.default;
-t.tempo_(80/60)
+t.tempo_(80/60);
+~root = 5;
+~scale = Scale.minor;
+)
+
 ~delay.free;
 ~verb = Synth(\verb, [\dec,1, \lpf,1500, \wet,1.0]);
 ~verb.set(\dec,1, \lpf,5000, \wet,1.0);
@@ -35,6 +39,7 @@ Tdef(\changeTempoGradually).stop;
 // FINALE !!!!
 // REMEMBER: first make the pads fade away
 (
+~verb.set(\dec,5, \wet, 1.0);
 ~static_noise_1.free;
 Pbindef(\pads).stop;
 Pbindef(\loop,	\start, 0.0,\dur, Pseq([0.5], 1), \addAction, 0); // Db
@@ -245,11 +250,12 @@ s.freqscope;
 s.meter;
 
 
+// KEEP IN MIND, you have to launch pads only at the beginning of the phrase
 (
 Pbindef(\pads,
 	\instrument, \dist,
-	\scale, Scale.minor,
-	\root,5,
+	\scale, Pfunc({~scale}),
+	\root, Pfunc({~root}),
 	\mtranspose, Pwhite(-0.01, 0.01, inf).clump(5),
 	\octave, Prand([3,4,5],inf).clump(5),
 	\degree, Pseq([
@@ -290,8 +296,8 @@ SynthDef(\sputnik, {
 (
 Pbindef(\sputnik,
 	\instrument, \sputnik,
-	\scale, Scale.minor,
-	\root, 5,
+	\scale, Pfunc({~scale}),
+	\root, Pfunc({~root}),
 	\octave, Prand([5], inf),
 	\degree, Prand([0], inf),
 	\dist, 40,
@@ -320,9 +326,9 @@ SynthDef(\sinfb, {
 Pbindef(\stabs,
 	\instrument, \sinfb,
 	\octave, Pseq([4,5],inf).clump(2),
-	\scale, Scale.minor,
-	\root, 1,
-	\degree, [0, 4], //Pseq([Pseq([3,3.1],8) ,Pseq([1,2],8)], inf),
+	\scale, Pfunc({~scale}),
+	\root, Pfunc({~root}),
+	\degree, [-2, 2], //Pseq([Pseq([3,3.1],8) ,Pseq([1,2],8)], inf),
 	\mtranspose, Pwhite(-0.02, 0.02, inf).clump(2),
 	\fb, 0.9,
 	\atk, 0.0,
@@ -379,7 +385,7 @@ Pbindef(\k,
 	\octave, 3,
 	\degree, Pseq([-3],inf),
 	\dur, Pseq([0.75, 0.5, 0.25, 0.5, 0.25, 0.5, 0.5, 0.25, 0.5], inf),
-	\amp, Pseq([   1, 0.5,  0.7, 0.7,    1, 0.5, 0.7,  0.5, 0.6], inf) * 2,
+	\amp, Pseq([   1, 0.5,  0.7, 0.7,    1, 0.5, 0.7,  0.5, 0.6], inf) * 3,
 	\rel, 0.1, //Pseq([ 0.1,   1,    1,   1,    1,   1,   1,    1,   1], inf),
 	\dc, Pseq([0.1,0.25], inf), //Pseg([0.0, 0.25], [4],\lin, inf),
 	\atk, 0.0,
@@ -408,7 +414,7 @@ Pbindef(\hh,
 		0.5,0.5,0.25,0.25,0.5
 		//0.5,Prand([0.5, Pn(0.25,2)],1),0.25,0.25,0.5
 	], inf),
-	\amp, Pgauss(1, 0.2, inf) * 5,
+	\amp, Pgauss(1, 0.2, inf) * 3,
 	\atk, 0.0,
 	\rel, Pseq([
 		0.01,
@@ -448,7 +454,7 @@ SynthDef(\bplay_distm,
 
 Pbindef(\s,\instrument,\bplay_dist,\buf,~dirt["tech"][12],\dur,Pseq([2.25, 1.75], inf),\rel,0.3,\rate,1.1,\dist,Prand([6,100],inf),\amp,0.5,\addAction,Pwrand([0,1],[1,7].normalizeSum,inf)).quant_([4,1]).play;
 Pbindef(\s).stop;
-
+Pbindef(\s).stop;
 
 (
 Pbindef(\cymbal,
@@ -489,7 +495,12 @@ SynthDef(\loSin, {
 (
 Pbindef(\bass,
 	\instrument, \loSin,
-	\freq, (65-24).midicps,
+	\octave, 3,
+	\scale, Pfunc({~scale}),
+	\root, Pfunc({~root}),
+	\degree, 2,
+
+	//\freq, (65-24).midicps,
 	\dist, 100,
 	\amp, 0.2,
 	\atk, 8 * t.beatDur,
@@ -500,7 +511,7 @@ Pbindef(\bass,
 )
 Pbindef(\bass).play;
 Pbindef(\bass).stop;
-
+Pbindef(\bass).clear;
 
 // GLITCH /////////////////////////////////////////////////////////////////////////////////////
 (
@@ -515,11 +526,7 @@ SynthDef(\glicth1, {
 	DetectSilence.ar(sig, 0.0001, doneAction:2);
 	Out.ar(out, Pan2.ar(sig, pan));
 }).add;
-);
 
-
-
-(
 SynthDef(\glitch2, {
 	|amp=1.0,out=0, pan=0.0|
 	var sig = Resonz.ar(Impulse.ar(0), freq:77, bwr:300) * amp;

@@ -1,4 +1,10 @@
+
+(
 t.tempo_(136/60);
+~root = 8;
+~tonica = 0;
+~scale = Scale.major;
+)
 
 // do you remember when we stayided together
 // I'm happy to feel you by my side
@@ -36,11 +42,7 @@ s.plotTree
 
 
 // TDEF TONE CHANGER //////////////////////////////////////////////////////////////////////////////////
-(
-~root = 8;
-~tonica = 0;
-~scale = Scale.major;
-)
+
 (
 Tdef(\chordChanger, {
 	var tonica = Pseq([-2, -3, 0, -4], inf).asStream;
@@ -259,6 +261,29 @@ Pbindef(\bass).stop;
 
 
 // LEAD ////////////////////////////////////////////////////////////////////////////////////
+
+(
+SynthDef(\squarebass, {
+	|
+	out=0, freq=440,
+	amp=1.0, pan=0.0,
+	width=0.5, detune=0.1,
+	atk=0.01, rel=0.1
+	|
+	var sig, env;
+	env = EnvGen.ar(Env.perc(atk, rel), doneAction:2);
+
+	sig = LFPulse.ar(freq + LFNoise1.ar(10, detune), width:width);
+	sig = sig * env * amp;
+	sig = Decimator.ar(sig, 11025, 8);
+	sig = sig.tanh;
+	Out.ar(out, Pan2.ar(sig, pan));
+}).add;
+);
+
+
+
+
 (
 Pbindef(\lead,
 	\instrument, \squarebass,
@@ -276,6 +301,8 @@ Pbindef(\lead,
 ).quant_([4,0]).play;
 )
 Pbindef(\lead).stop;
+
+s.freqscope
 
 /*
 (
