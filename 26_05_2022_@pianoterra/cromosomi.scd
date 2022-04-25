@@ -9,6 +9,10 @@
 // 0.5
 //| Db  Eb | Fm  Eb || Db  Eb | Fm  Eb |
 
+// USED SAMPLES
+// * d["loops"][6] - piano loop
+// * ~dirt["tech"][12] - sidestick
+
 (
 t = TempoClock.default;
 t.tempo_(80/60);
@@ -407,7 +411,6 @@ SynthDef(\hh, {
 (
 Pbindef(\hh,
 	\instrument,\hh,
-	//\buf, Pseq([~dirt["tech"][0], ~dirt["tech"][7], Pn(~dirt["tech"][0],3)], inf),
 	\freq, [7000, 9000],
 	\rq, 0.05,
 	\dur, Pseq([

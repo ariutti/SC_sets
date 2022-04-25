@@ -785,6 +785,29 @@ SynthDef(\fm3, {
 );
 
 // my wip (based on chowning 1973 paper)
+
+/* simil organ:
+(
+Pbindef(\mel,
+	\instrument, \fm4,
+	\scale, Pfunc({~scale}),
+	\root, Pfunc({~root}),
+	\octave, Prand([4],inf),
+	\degree, [0,2,4], //Prand([0,4,2], inf), //0 + Pseq([[0,4]],inf),
+	\dur, 4,
+	\n1, 4, //Prand([2,3,4,5],inf),
+	\n2, 12, //Prand([3,4,5],inf),
+	\mi, 500,
+	\atk, 0.0, \rel, 1,
+	\amp, 0.5, //Pseq([1,0.5, 0.5], inf) * 0.4,
+	\pan, Pseq([-1.0, 1.0], inf), //Pseg([-1.0, 1.0, -10], [2,2], \lin, inf),
+	\sustain, 1,
+	\addAction, 1, //Prand([0,1],inf)
+).quant_([4]).play;
+)
+*/
+
+
 (
 SynthDef(\fm4, {
 	|
@@ -1144,6 +1167,7 @@ SynthDef(\acid, {
 	sig = sig * env * amp;
 	// a little bit of distorsion
 	//sig = sig.tanh;
+	sig = LeakDC.ar(sig);
 	Out.ar(out, Pan2.ar(sig, pos))
 }).add;
 );
@@ -1800,6 +1824,17 @@ Pbindef(\lick_lead,
 
 */
 
+
+(
+SynthDef(\sinfb, {
+	|freq=400,atk=0.1,rel=0.1,amp=1.0,pan=0.0,fb=0.0|
+	var env = EnvGen.ar(Env.perc(atk,rel),doneAction:2);
+	var sig = SinOscFB.ar(freq, fb) * env * amp;
+	Out.ar(0, Pan2.ar(sig, pan));
+}).add;
+)
+
+/*
 (
 SynthDef(\sinfb, {
 	arg freq = 440, atk = 0.01, sus = 0, rel = 1, fb = 0, amp = 0.3, out = 0, pan=0;
@@ -1810,6 +1845,7 @@ SynthDef(\sinfb, {
 	Out.ar(out,Pan2.ar(sig,pan,amp));
 }).add;
 );
+*/
 
 (
 SynthDef(\sinfb_adsr, {

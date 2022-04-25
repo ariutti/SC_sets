@@ -26,9 +26,9 @@ Pbindef(\test,
 s.meter;
 Pbindef(\test).stop;
 
-Pbindef(\test)
+Pbindef(\test).stop;
 
-"espeak -v it \"benvenuti \"".unixCmd;
+"espeak -v it \" propp\"".unixCmd;
 
 Pbindef(\k,\instrument,\bplay,\buf,d["k"][0],\dur,1,\amp,3,\addAction,1,\rel, 0.1).quant_(4).play;
 Pbindef(\k).stop;

@@ -1,5 +1,23 @@
 t = TempoClock.default
 
+// USED SAMPLES
+// ~dirt["sitar"][1]
+// ~dirt["sitar"][2]
+// ~dirt["sitar"][4]
+// ~dirt["sitar"][6]
+// ~dirt["tabla"] // - all
+//d["k"][0]
+//d["k"][1]
+//d["ch"][0]
+//d["sstick"][0]
+//d["sstick"][2]
+//~dirt["jazz"][7]
+//~dirt["yeah"] // all
+//~dirt["speech"] // all
+//~dirt["drumtraks"][6]
+//~dirt["jazz"][7]
+
+
 // CHORDS
 // 1  2  3  4 | 1 2 3 4 | 1 2 3 4 ||
 // Bm7 - F#m7 | G       | -       ||

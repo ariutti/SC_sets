@@ -5,10 +5,12 @@
 	// 3. evaluate the code
 
 (
+// a variable to make sure to wait until all the samples are correctly loaded
+~wait_for_sample_to_load = true;
 //increase number of buffers the server has access to for loading samples
-s.options.numBuffers = 1024 * 32;
+s.options.numBuffers = 1024 * 64;
 //increase the memory available to the server
-s.options.memSize = 8192 * 128;
+s.options.memSize = 8192 * 256;
 
 //display the tree
 //s.plotTree;
@@ -25,10 +27,12 @@ s.waitForBoot({
 		for (0, d[\foldernames].size-1,
 			{arg i; d.add(d[\foldernames][i].folderName -> d[\foldernames][i].entries.collect({
 				arg sf;
-				//Buffer.read(s,sf.fullPath);
 				if( sf.isFile && sf.extension.toLower == "wav", {
-					("loading buffer: (folder "++d[\foldernames][i].folderName++"): " ++ sf.fileName).postln;
-					//s.sync;
+
+					if( ~wait_for_sample_to_load, {
+						("loading 'd' buffer: (folder "++d[\foldernames][i].folderName++"): " ++ sf.fileName).postln;
+						s.sync;
+					});
 					Buffer.read(s, sf.fullPath);
 				});
 			});
@@ -48,19 +52,20 @@ s.waitForBoot({
 			|i|
 			~dirt.add(~dirt[\foldernames][i].folderName -> ~dirt[\foldernames][i].entries.collect({
 				arg sf;
-				//postln( sf.extension );
-
 				if( sf.isFile && sf.extension.toLower == "wav", {
-					("loading buffer (folder "++~dirt[\foldernames][i].folderName++"): " ++ sf.fileName).postln;
-					//s.sync;
-					Buffer.read(s,sf.fullPath);
+
+					if( ~wait_for_sample_to_load, {
+							("loading 'dirt' buffer (folder "++~dirt[\foldernames][i].folderName++"): " ++ sf.fileName).postln;
+						s.sync;
+					});
+					Buffer.read(s, sf.fullPath);
 				});
 			});
 		)});
 		currentTime = Date.localtime.rawSeconds;
 		("elapsed: " ++ (currentTime-initTime)).postln;
 
-
+		/*
 		"WARNING: loading \"sonatina\" samples".postln;
 		// load samples from sonatina
 		// for ~rootpah, see "MasterOfMasters.scd"
@@ -132,17 +137,21 @@ s.waitForBoot({
 			//{"ERROR".postln;}, {}
 			//);
 		};
+		*/
 		// load all the need secondary samples
 		//~samples = ~loadfunc.(\piano,  "pianoteq", "pianoteq-p-", ~samples);
-		s.sync; // pianoteq samples
+		//s.sync; // pianoteq samples
 	}).start;
 	//~samples = ~loadfunc.(\violins_1st_sus, "1st Violins", "1st-violins-sus-", ~samples); s.sync;
 
-	//100.wait;
-	4.wait;
 
+	if( ~wait_for_sample_to_load, {
+		100.wait;
+	}, {
+		4.wait;
+	});
 
-	"loading synthdefs".postln;
+	"\nWARNING: loading synthdefs".postln;
 	("mySynthDefs.scd").loadRelative;
 
 	1.wait;
@@ -158,18 +167,20 @@ s.waitForBoot({
 	//activate StageLimiter - Part of the BatLib quark
 	StageLimiter.activate;
 
-	3.wait;
+	2.wait;
 
 	//display the oscilloscope
 	s.scope;
 	//display the meter
 	s.meter;
+	Pbindef.gui;
 	// display the freqscope
 	//s.freqscope;
 	//display tree
 	//s.plotTree;
 
 	// MIDI IN ///////////////////////////////////////////////
+	"\nWARNING: MIDI init".postln;
 	MIDIClient.init;
 	s.sync;
 	5.wait;
@@ -179,9 +190,13 @@ s.waitForBoot({
 
 	s.volume_(0);
 
+	"\nWARNING: launch pianoteq".postln;
+	"cd /home/nicola/AppSources/Pianoteq/amd64; ./Pianoteq".unixCmd;
+	"WARNING: remember to load MIDI preset on pianoteq".postln;
+
 
 	"\nWARNING: Setup done!".postln;
-	"\nWARNING: remember to connect SC to OBS".postln;
+	//"WARNING: remember to connect SC to OBS".postln;
 });
 )
 

@@ -13,25 +13,6 @@ a.free;
 
 
 
-(
-SynthDef(\metronome, {
-	|
-	out=0,
-	amp=1, freq=1000, pos=0.0,
-	rel=0.1
-	|
-	var sig, env, fenv;
-
-	// amplitude envelope
-	env   = EnvGen.ar(Env.perc( 0.001, rel), doneAction:2);
-	// cut frequency envelope
-	sig = SinOsc.ar(freq);
-	//sig = RLPF.ar(sig, rf*fenv, rq);
-	sig = sig * env * amp;
-	Out.ar(out, Pan2.ar(sig, pos));
-}).add;
-);
-
 // metronome
 (
 Pbindef(\metronome,
